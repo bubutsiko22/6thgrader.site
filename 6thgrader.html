@@ -4,305 +4,360 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>6thGrader — Understand Anything, Instantly</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#050810;--surface:#0d1120;--surface2:#141928;--border:rgba(255,255,255,0.07);
-  --accent:#4DFFA0;--accent2:#4D9FFF;--accent3:#FF6B6B;--text:#f0f4ff;--muted:#6b7a9e;
+:root{
+  --bg:#060912;--s1:#0e1422;--s2:#151c2e;--s3:#1c253a;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --green:#3dffa0;--blue:#4d9fff;--red:#ff6b6b;--yellow:#ffd166;
+  --text:#eef2ff;--muted:#5d6a8a;--muted2:#8896b3;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;cursor:none}
-/* Cursor */
-.cur{width:10px;height:10px;background:var(--accent);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:transform .15s}
-.cur-r{width:32px;height:32px;border:1px solid rgba(77,255,160,.35);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s,height .2s}
-/* Page system */
-.page{display:none;min-height:100vh;animation:fadeIn .3s ease}
-.page.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 48px;display:flex;align-items:center;justify-content:space-between;background:rgba(5,8,16,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px}
-.logo-b{background:var(--accent);color:#050810;font-size:.55rem;font-weight:700;padding:2px 6px;border-radius:4px;letter-spacing:.05em;text-transform:uppercase}
-.nav-links{display:flex;align-items:center;gap:28px;list-style:none}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:.88rem;cursor:pointer;transition:color .2s}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;cursor:none;line-height:1.6}
+
+/* ── CURSOR ── */
+#cur,#curR{position:fixed;pointer-events:none;border-radius:50%;z-index:9999;transform:translate(-50%,-50%)}
+#cur{width:8px;height:8px;background:var(--green);transition:transform .12s,width .2s,height .2s}
+#curR{width:28px;height:28px;border:1px solid rgba(61,255,160,.3);transition:width .25s,height .25s,border-color .25s;z-index:9998}
+body:has(a:hover) #cur,body:has(button:hover) #cur,body:has([onclick]:hover) #cur{transform:translate(-50%,-50%) scale(2)}
+body:has(a:hover) #curR,body:has(button:hover) #curR,body:has([onclick]:hover) #curR{width:48px;height:48px;border-color:rgba(61,255,160,.55)}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none;min-height:100vh}
+.page.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── NAV ── */
+nav{position:fixed;inset:0 0 auto 0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:16px 48px;background:rgba(6,9,18,.8);backdrop-filter:blur(24px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;cursor:pointer;color:var(--text);user-select:none}
+.nav-logo span{background:var(--green);color:#060912;font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:.06em;text-transform:uppercase}
+.nav-links{display:flex;align-items:center;gap:32px;list-style:none}
+.nav-links a{color:var(--muted2);font-size:.875rem;cursor:pointer;transition:color .2s;text-decoration:none}
 .nav-links a:hover{color:var(--text)}
-.nav-cta{background:var(--accent);color:#050810!important;font-weight:500!important;padding:9px 20px;border-radius:8px;transition:opacity .2s!important}
-.nav-cta:hover{opacity:.85!important}
-/* HERO */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden}
-.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(77,255,160,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(77,255,160,.04) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black,transparent);animation:gridS 20s linear infinite}
-@keyframes gridS{0%{transform:translateY(0)}100%{transform:translateY(60px)}}
-.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.25;animation:orbF 8s ease-in-out infinite}
-.o1{width:500px;height:500px;background:radial-gradient(circle,rgba(77,255,160,.4),transparent 70%);top:-100px;left:-100px}
-.o2{width:400px;height:400px;background:radial-gradient(circle,rgba(77,159,255,.4),transparent 70%);bottom:-50px;right:-100px;animation-delay:-3s}
-.o3{width:300px;height:300px;background:radial-gradient(circle,rgba(255,107,107,.3),transparent 70%);top:40%;left:60%;animation-delay:-5s}
-@keyframes orbF{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-30px) scale(1.05)}66%{transform:translate(-20px,20px) scale(.95)}}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(77,255,160,.08);border:1px solid rgba(77,255,160,.2);color:var(--accent);font-size:.78rem;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:8px 16px;border-radius:100px;margin-bottom:28px}
-.eyebrow-dot{width:6px;height:6px;background:var(--accent);border-radius:50%;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,7vw,6.5rem);line-height:1;letter-spacing:-.03em;margin-bottom:20px;max-width:900px}
-.grad{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:clamp(1rem,2vw,1.2rem);color:var(--muted);max-width:500px;line-height:1.7;margin-bottom:16px}
-/* Counter */
-.hero-counter{font-size:.85rem;color:var(--muted);margin-bottom:36px}
-.hero-counter strong{color:var(--accent);font-weight:600}
-/* Demo box */
-.demo-box{width:100%;max-width:620px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:6px 6px 6px 18px;display:flex;align-items:center;gap:10px;transition:border-color .3s,box-shadow .3s;margin-bottom:14px}
-.demo-box:focus-within{border-color:rgba(77,255,160,.35);box-shadow:0 0 0 4px rgba(77,255,160,.07),0 20px 40px rgba(0,0,0,.3)}
-.demo-input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:300}
-.demo-input::placeholder{color:var(--muted)}
-.demo-btn{background:var(--surface2);color:var(--text);border:1px solid rgba(255,255,255,.1);padding:11px 22px;border-radius:9px;font-family:'DM Sans',sans-serif;font-weight:400;font-size:.9rem;cursor:pointer;transition:border-color .2s,background .2s;white-space:nowrap}
-.demo-btn:hover{border-color:rgba(255,255,255,.25);background:rgba(255,255,255,.05)}
-.suggestions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:0}
-.pill{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-size:.78rem;padding:6px 13px;border-radius:100px;cursor:pointer;transition:all .2s}
-.pill:hover{border-color:rgba(77,255,160,.3);color:var(--accent);background:rgba(77,255,160,.05)}
+.nav-cta{background:var(--green)!important;color:#060912!important;font-weight:500!important;padding:9px 22px;border-radius:8px;transition:opacity .2s,transform .2s}
+.nav-cta:hover{opacity:.88!important;transform:translateY(-1px)!important}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:130px 24px 80px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(61,255,160,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(61,255,160,.035) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(ellipse 85% 65% at 50% 50%,#000,transparent);animation:gs 24s linear infinite}
+@keyframes gs{to{background-position:0 56px}}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);pointer-events:none}
+.orb1{width:560px;height:560px;background:radial-gradient(circle,rgba(61,255,160,.18),transparent 65%);top:-120px;left:-140px;animation:of 9s ease-in-out infinite}
+.orb2{width:420px;height:420px;background:radial-gradient(circle,rgba(77,159,255,.18),transparent 65%);bottom:-80px;right:-120px;animation:of 9s ease-in-out infinite;animation-delay:-4s}
+.orb3{width:280px;height:280px;background:radial-gradient(circle,rgba(255,107,107,.12),transparent 65%);top:45%;left:65%;animation:of 9s ease-in-out infinite;animation-delay:-7s}
+@keyframes of{0%,100%{transform:translate(0,0)}40%{transform:translate(20px,-24px)}70%{transform:translate(-16px,16px)}}
+
+.eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(61,255,160,.07);border:1px solid rgba(61,255,160,.18);color:var(--green);font-size:.75rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:7px 16px;border-radius:100px;margin-bottom:28px}
+.edot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:ep 2s ease-in-out infinite}
+@keyframes ep{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.7)}}
+
+h1.hero-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,7.5vw,7rem);line-height:.95;letter-spacing:-.04em;margin-bottom:24px;max-width:880px}
+.g{background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(1rem,1.8vw,1.2rem);color:var(--muted2);max-width:480px;line-height:1.75;margin-bottom:14px}
+.hero-count{font-size:.85rem;color:var(--muted);margin-bottom:36px}<br>
+.hero-count strong{color:var(--green);font-weight:500}
+
+/* Demo */
+.demo-wrap{width:100%;max-width:600px;margin-bottom:14px}
+.demo-box{display:flex;align-items:center;gap:8px;background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:7px 7px 7px 20px;transition:border-color .3s,box-shadow .3s}
+.demo-box:focus-within{border-color:rgba(61,255,160,.4);box-shadow:0 0 0 4px rgba(61,255,160,.07)}
+.demo-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:300;min-width:0}
+.demo-box input::placeholder{color:var(--muted)}
+.demo-box button{flex-shrink:0;background:var(--s2);color:var(--muted2);border:1px solid var(--border2);padding:11px 20px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.875rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+.demo-box button:hover{border-color:rgba(255,255,255,.2);color:var(--text)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.pill{background:var(--s1);border:1px solid var(--border);color:var(--muted2);font-size:.78rem;padding:6px 14px;border-radius:100px;cursor:pointer;transition:all .2s}
+.pill:hover{border-color:rgba(61,255,160,.3);color:var(--green);background:rgba(61,255,160,.05)}
+
 /* Demo output */
-.demo-out{display:none;width:100%;max-width:620px;margin-top:18px}
-.demo-out.show{display:block;animation:fadeIn .4s ease}
-.out-card{background:var(--surface);border:1px solid rgba(77,255,160,.18);border-radius:14px;padding:22px;text-align:left}
-.out-lbl{font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.out-text{font-size:.92rem;line-height:1.75;color:var(--text);margin-bottom:0}
-.out-analogy{background:rgba(77,255,160,.06);border:1px solid rgba(77,255,160,.1);border-radius:9px;padding:12px 15px;margin-top:14px;font-size:.88rem;color:var(--accent);font-style:italic}
-.out-section{margin-top:16px}
-.out-sec-title{font-size:.67rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px}
-.out-sec-title::before{content:'';display:inline-block;width:3px;height:11px;background:var(--accent);border-radius:2px}
-.out-steps{display:flex;flex-direction:column;gap:7px}
-.out-step{display:flex;gap:11px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:7px;padding:9px 13px;font-size:.86rem;color:var(--text);line-height:1.5}
-.sn{font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--accent);min-width:16px;margin-top:1px}
+.demo-out{display:none;width:100%;max-width:600px;margin-top:20px}
+.demo-out.show{display:block;animation:fadeUp .4s ease}
+.out-card{background:var(--s1);border:1px solid rgba(61,255,160,.15);border-radius:16px;padding:24px;text-align:left}
+.out-lbl{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.out-lbl::before{content:'';display:inline-block;width:3px;height:12px;background:var(--green);border-radius:2px}
+.out-text{font-size:.92rem;line-height:1.8;color:var(--text)}
+.out-analogy{background:rgba(61,255,160,.05);border:1px solid rgba(61,255,160,.1);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:.88rem;line-height:1.7;color:var(--green);font-style:italic}
+.out-sec{margin-top:16px}
+.out-sec-lbl{font-size:.67rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.out-sec-lbl::before{content:'';display:inline-block;width:3px;height:10px;background:var(--blue);border-radius:2px}
+.out-steps{display:flex;flex-direction:column;gap:6px}
+.out-step{display:flex;gap:10px;align-items:flex-start;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:8px;padding:9px 14px;font-size:.86rem;color:var(--text);line-height:1.55}
+.sn{font-family:'Syne',sans-serif;font-weight:700;font-size:.72rem;color:var(--green);min-width:16px;padding-top:1px}
 .out-terms{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
-.kterm{background:rgba(77,159,255,.08);border:1px solid rgba(77,159,255,.15);color:var(--accent2);font-size:.78rem;padding:4px 11px;border-radius:6px}
-.tcur{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink .8s step-end infinite;vertical-align:text-bottom;margin-left:1px}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-/* STATS */
-.stats{display:flex;justify-content:center;gap:48px;padding:22px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--surface);flex-wrap:wrap}
-.stat-n{font-family:'Syne',sans-serif;font-size:1.7rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.stat-l{font-size:.78rem;color:var(--muted);margin-top:2px;text-align:center}
-/* Sections */
+.kt{background:rgba(77,159,255,.08);border:1px solid rgba(77,159,255,.15);color:var(--blue);font-size:.78rem;padding:4px 12px;border-radius:6px}
+.tcur{display:inline-block;width:2px;height:.9em;background:var(--green);animation:bc .75s step-end infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes bc{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Stats */
+.stats{display:flex;justify-content:center;gap:56px;padding:24px 24px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--s1);flex-wrap:wrap}
+.stat-n{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stat-l{font-size:.78rem;color:var(--muted);margin-top:2px}
+
+/* Section */
 .sec{position:relative}
-.sec-in{max-width:1100px;margin:0 auto;padding:90px 24px}
-.sec-lbl{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
-.sec-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.02em;line-height:1.1;margin-bottom:18px}
-.sec-sub{font-size:1.05rem;color:var(--muted);max-width:480px;line-height:1.7}
-/* Features */
-.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-top:56px}
-.feat-card{background:var(--surface);padding:32px;transition:background .3s;position:relative;overflow:hidden}
-.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),var(--accent2));opacity:0;transition:opacity .3s}
-.feat-card:hover{background:var(--surface2)}
-.feat-card:hover::before{opacity:1}
-.feat-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:18px;background:rgba(255,255,255,.04);border:1px solid var(--border)}
-.feat-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:9px}
-.feat-desc{font-size:.87rem;color:var(--muted);line-height:1.6}
+.sec-in{max-width:1080px;margin:0 auto;padding:88px 24px}
+.lbl{font-size:.72rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:14px}
+h2.stitle{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3.2rem);letter-spacing:-.025em;line-height:1.1;margin-bottom:18px}
+.ssub{font-size:1rem;color:var(--muted2);max-width:460px;line-height:1.75}
+
+/* Features grid */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-top:52px}
+.feat{background:var(--s1);padding:32px;transition:background .25s;position:relative;overflow:hidden;cursor:pointer}
+.feat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--blue));opacity:0;transition:opacity .25s}
+.feat:hover{background:var(--s2)}
+.feat:hover::after{opacity:1}
+.fi{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:1.35rem;margin-bottom:16px;background:rgba(255,255,255,.035);border:1px solid var(--border)}
+.ft{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px}
+.fd{font-size:.86rem;color:var(--muted2);line-height:1.6}
+
 /* How it works */
-.how-bg{background:var(--surface)}
-.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:56px}
-.step-card{text-align:center;padding:36px 22px;border-radius:18px;border:1px solid var(--border);background:var(--bg);transition:transform .3s,border-color .3s}
-.step-card:hover{transform:translateY(-5px);border-color:rgba(77,255,160,.2)}
-.step-n2{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;background:linear-gradient(135deg,rgba(77,255,160,.15),rgba(77,159,255,.1));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px}
-.step-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:10px}
-.step-desc{font-size:.87rem;color:var(--muted);line-height:1.6}
+.how{background:var(--s1)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:52px}
+.step{text-align:center;padding:36px 24px;border-radius:18px;border:1px solid var(--border);background:var(--bg);transition:transform .3s,border-color .3s}
+.step:hover{transform:translateY(-5px);border-color:rgba(61,255,160,.2)}
+.snum{font-family:'Syne',sans-serif;font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:16px;background:linear-gradient(135deg,rgba(61,255,160,.2),rgba(77,159,255,.12));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.stit{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:10px}
+.sdesc{font-size:.86rem;color:var(--muted2);line-height:1.65}
+
 /* Subjects */
 .subj-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:40px}
-.subj-tag{background:var(--surface);border:1px solid var(--border);padding:14px 20px;border-radius:10px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .2s;text-decoration:none;color:var(--text)}
-.subj-tag:hover{border-color:rgba(77,255,160,.3);color:var(--accent);background:rgba(77,255,160,.05);transform:translateY(-2px)}
+.subj{background:var(--s1);border:1px solid var(--border);padding:13px 20px;border-radius:10px;font-size:.9rem;cursor:pointer;display:flex;align-items:center;gap:9px;transition:all .22s;color:var(--text);user-select:none}
+.subj:hover{border-color:rgba(61,255,160,.28);color:var(--green);background:rgba(61,255,160,.04);transform:translateY(-2px)}
+
 /* Pricing */
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:56px;max-width:780px;margin-left:auto;margin-right:auto}
-.price-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:36px;position:relative;transition:transform .3s}
-.price-card:hover{transform:translateY(-3px)}
-.price-card.feat2{border-color:rgba(77,255,160,.28);background:linear-gradient(135deg,rgba(77,255,160,.05),rgba(77,159,255,.04))}
-.price-badge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--accent);color:#050810;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 13px;border-radius:100px;white-space:nowrap}
-.price-tier{font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
-.price-amt{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:3px}
-.price-amt span{font-size:.9rem;font-weight:400;color:var(--muted)}
-.price-sub{font-size:.82rem;color:var(--muted);margin-bottom:28px}
-.price-feats{list-style:none;margin-bottom:28px}
-.price-feats li{display:flex;align-items:center;gap:9px;font-size:.87rem;padding:7px 0;border-bottom:1px solid var(--border);color:var(--muted)}
-.price-feats li:last-child{border-bottom:none}
-.ck{color:var(--accent);font-size:.78rem}
+.price-sec{background:var(--s1)}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:52px;max-width:760px;margin-left:auto;margin-right:auto}
+.pc{background:var(--bg);border:1px solid var(--border);border-radius:18px;padding:36px;position:relative;transition:transform .25s}
+.pc:hover{transform:translateY(-3px)}
+.pc.pro{border-color:rgba(61,255,160,.25);background:linear-gradient(160deg,rgba(61,255,160,.04),rgba(77,159,255,.03))}
+.pbadge{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--green);color:#060912;font-size:.67rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 14px;border-radius:100px;white-space:nowrap}
+.ptier{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.pamt{font-family:'Syne',sans-serif;font-size:2.8rem;font-weight:800;letter-spacing:-.02em;line-height:1;margin-bottom:4px}
+.pamt small{font-size:.9rem;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif}
+.psub{font-size:.82rem;color:var(--muted);margin-bottom:28px;margin-top:4px}
+.pfeats{list-style:none;margin-bottom:28px}
+.pfeats li{display:flex;align-items:center;gap:9px;font-size:.86rem;padding:8px 0;border-bottom:1px solid var(--border);color:var(--muted2)}
+.pfeats li:last-child{border-bottom:none}
+.ck{color:var(--green);font-size:.8rem;flex-shrink:0}
+
 /* Buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none}
-.btn-green{background:var(--accent);color:#050810;padding:14px 32px;font-size:.95rem}
-.btn-green:hover{opacity:.85;transform:translateY(-2px);box-shadow:0 12px 36px rgba(77,255,160,.22)}
-.btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);padding:14px 32px;font-size:.95rem}
-.btn-outline:hover{border-color:rgba(255,255,255,.25)}
-.btn-surface{background:var(--surface2);color:var(--text);border:1px solid var(--border);padding:13px 100%;font-size:.92rem;width:100%}
-.btn-surface:hover{border-color:rgba(255,255,255,.2)}
-.btn-pro{background:var(--accent);color:#050810;padding:13px 100%;font-size:.92rem;width:100%}
-.btn-pro:hover{opacity:.85;transform:translateY(-1px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s;border:none;text-decoration:none;font-size:.95rem}
+.btn-g{background:var(--green);color:#060912;padding:14px 32px}
+.btn-g:hover{opacity:.87;transform:translateY(-2px);box-shadow:0 14px 40px rgba(61,255,160,.2)}
+.btn-o{background:transparent;color:var(--text);border:1px solid var(--border2);padding:14px 32px}
+.btn-o:hover{border-color:rgba(255,255,255,.28)}
+.btn-ghost{background:var(--s2);color:var(--text);border:1px solid var(--border);padding:13px 24px;width:100%}
+.btn-ghost:hover{border-color:rgba(255,255,255,.18)}
+.btn-pro{background:var(--green);color:#060912;padding:13px 24px;width:100%}
+.btn-pro:hover{opacity:.87}
+
 /* CTA */
-.cta-sec{text-align:center;padding:90px 24px;position:relative;overflow:hidden}
-.cta-bg2{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(77,255,160,.06),transparent)}
-.cta-title{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:800;letter-spacing:-.02em;max-width:650px;margin:0 auto 20px;line-height:1.1}
-.cta-sub{font-size:1.05rem;color:var(--muted);margin-bottom:36px}
-.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.cta{text-align:center;padding:90px 24px;position:relative;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 55% at 50% 50%,rgba(61,255,160,.055),transparent)}
+h2.cta-title{font-family:'Syne',sans-serif;font-size:clamp(2.2rem,5vw,4rem);font-weight:800;letter-spacing:-.025em;max-width:640px;margin:0 auto 20px;line-height:1.08}
+.cta-sub{font-size:1rem;color:var(--muted2);margin-bottom:36px}
+.cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
 /* Footer */
-footer{border-top:1px solid var(--border);padding:36px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
-.f-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.05rem}
-.f-copy{font-size:.82rem;color:var(--muted)}
-.f-links{display:flex;gap:22px}
-.f-links a{color:var(--muted);text-decoration:none;font-size:.82rem;cursor:pointer;transition:color .2s}
-.f-links a:hover{color:var(--text)}
+footer{border-top:1px solid var(--border);padding:32px 48px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px}
+.flogo{font-family:'Syne',sans-serif;font-weight:800;font-size:1rem}
+.fcopy{font-size:.8rem;color:var(--muted)}
+.flinks{display:flex;gap:20px}
+.flinks a{color:var(--muted);font-size:.8rem;cursor:pointer;transition:color .2s;text-decoration:none}
+.flinks a:hover{color:var(--text)}
+
 /* Reveal */
-.rev{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease}
-.rev.vis{opacity:1;transform:translateY(0)}
-/* Inner pages */
-.inner-page{padding:100px 24px 60px;max-width:1100px;margin:0 auto}
-.page-hero{text-align:center;padding:80px 24px 48px;background:var(--surface);border-bottom:1px solid var(--border)}
-.page-hero h1{font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
-.page-hero p{color:var(--muted);font-size:1rem;max-width:480px;margin:0 auto}
-/* Auth pages */
-.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg)}
-.auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:420px}
-.auth-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin-bottom:6px}
-.auth-sub{color:var(--muted);font-size:.9rem;margin-bottom:32px}
-.form-group{margin-bottom:18px}
-.form-label{display:block;font-size:.82rem;color:var(--muted);margin-bottom:6px;font-weight:500}
-.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s}
-.form-input:focus{border-color:rgba(77,255,160,.35)}
-.form-input::placeholder{color:var(--muted)}
-.form-submit{width:100%;background:var(--accent);color:#050810;border:none;padding:14px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;margin-top:8px;transition:opacity .2s}
-.form-submit:hover{opacity:.85}
-.auth-link{text-align:center;margin-top:18px;font-size:.87rem;color:var(--muted)}
-.auth-link a{color:var(--accent);cursor:pointer}
-/* Dashboard */
-.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:32px 0}
-.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
-.dash-num{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
-.dash-lbl{font-size:.8rem;color:var(--muted)}
-.dash-change{font-size:.78rem;color:var(--accent);margin-top:4px}
-/* Subject page */
-.lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:32px}
-.lesson-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;cursor:pointer;transition:all .3s}
-.lesson-card:hover{border-color:rgba(77,255,160,.25);transform:translateY(-3px);background:var(--surface2)}
-.lesson-title{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px}
-.lesson-desc{font-size:.85rem;color:var(--muted);line-height:1.6;margin-bottom:14px}
-.lesson-meta{display:flex;gap:10px;align-items:center}
-.lesson-time{font-size:.75rem;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:5px}
-.lesson-lvl{font-size:.75rem;color:var(--accent);background:rgba(77,255,160,.08);border:1px solid rgba(77,255,160,.15);padding:3px 10px;border-radius:5px}
-/* Lesson page */
-.lesson-wrap{max-width:720px;margin:0 auto;padding:100px 24px 60px}
-.lesson-back{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:.87rem;cursor:pointer;margin-bottom:32px;transition:color .2s}
-.lesson-back:hover{color:var(--text)}
-.lesson-h{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
-.lesson-body p{font-size:.97rem;line-height:1.8;color:rgba(240,244,255,.85);margin-bottom:18px}
-.lesson-body h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin:28px 0 12px;color:var(--text)}
-.lesson-analogy-box{background:rgba(77,255,160,.06);border:1px solid rgba(77,255,160,.15);border-radius:12px;padding:18px 20px;margin:24px 0;font-size:.93rem;line-height:1.7;color:var(--accent)}
-.quiz-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:36px}
-.quiz-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin-bottom:18px}
-.quiz-q{font-size:.93rem;margin-bottom:14px;line-height:1.6}
-.quiz-opts{display:flex;flex-direction:column;gap:9px}
-.quiz-opt{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;cursor:pointer;font-size:.88rem;transition:all .2s;text-align:left}
-.quiz-opt:hover{border-color:rgba(77,255,160,.3);background:rgba(77,255,160,.05)}
-.quiz-opt.correct{border-color:var(--accent);background:rgba(77,255,160,.1);color:var(--accent)}
-.quiz-opt.wrong{border-color:var(--accent3);background:rgba(255,107,107,.1);color:var(--accent3)}
-/* Chat */
-.chat-wrap{display:flex;flex-direction:column;height:100vh;padding-top:65px}
-.chat-msgs{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;max-width:780px;margin:0 auto;width:100%}
-.chat-msg{display:flex;gap:12px;align-items:flex-start;animation:fadeIn .3s ease}
-.chat-msg.user{flex-direction:row-reverse}
-.msg-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0}
-.msg-avatar.bot{background:rgba(77,255,160,.15);border:1px solid rgba(77,255,160,.2);color:var(--accent);font-family:'Syne',sans-serif}
-.msg-avatar.user{background:rgba(77,159,255,.15);border:1px solid rgba(77,159,255,.2);color:var(--accent2);font-family:'Syne',sans-serif}
-.msg-bubble{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:13px 17px;font-size:.9rem;line-height:1.65;max-width:580px}
-.chat-msg.user .msg-bubble{background:rgba(77,159,255,.1);border-color:rgba(77,159,255,.2)}
-.chat-input-row{border-top:1px solid var(--border);padding:16px 24px;background:rgba(5,8,16,.9);backdrop-filter:blur(20px)}
-.chat-input-inner{display:flex;gap:10px;max-width:780px;margin:0 auto}
-.chat-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:12px 18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s;resize:none;height:46px}
-.chat-input:focus{border-color:rgba(77,255,160,.3)}
-.chat-send{background:var(--accent);color:#050810;border:none;border-radius:11px;padding:0 20px;cursor:pointer;font-size:1.1rem;transition:opacity .2s;height:46px}
+.rev{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.rev.vis{opacity:1;transform:none}
+
+/* ── AUTH ── */
+.auth-bg{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--bg);position:relative;overflow:hidden}
+.auth-bg::before{content:'';position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(61,255,160,.07),transparent 60%);top:-100px;left:-100px;pointer-events:none}
+.auth-card{background:var(--s1);border:1px solid var(--border2);border-radius:20px;padding:40px;width:100%;max-width:420px;position:relative;z-index:1}
+.auth-h{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:6px}
+.auth-s{color:var(--muted2);font-size:.9rem;margin-bottom:32px}
+.fgrp{margin-bottom:18px}
+.flbl{display:block;font-size:.8rem;color:var(--muted2);margin-bottom:7px;font-weight:500}
+.finp{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s}
+.finp:focus{border-color:rgba(61,255,160,.4)}
+.finp::placeholder{color:var(--muted)}
+.fsub{width:100%;background:var(--green);color:#060912;border:none;padding:14px;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;margin-top:8px;transition:opacity .2s}
+.fsub:hover{opacity:.87}
+.alink{text-align:center;margin-top:18px;font-size:.87rem;color:var(--muted)}
+.alink a{color:var(--green);cursor:pointer}
+
+/* ── DASHBOARD ── */
+.inner{padding:100px 24px 60px;max-width:1080px;margin:0 auto}
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:28px 0 40px}
+.dc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px}
+.dn{font-family:'Syne',sans-serif;font-size:2.2rem;font-weight:800;background:linear-gradient(135deg,var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.dl{font-size:.8rem;color:var(--muted)}
+.dc-ch{font-size:.78rem;color:var(--green);margin-top:5px;cursor:pointer}
+
+/* ── SUBJECT PAGE ── */
+.page-hero{text-align:center;padding:88px 24px 44px;background:var(--s1);border-bottom:1px solid var(--border)}
+.page-hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-.02em;margin-bottom:10px}
+.page-hero p{color:var(--muted2);font-size:.95rem;max-width:460px;margin:0 auto}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-top:28px}
+.lc{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all .28s}
+.lc:hover{border-color:rgba(61,255,160,.22);transform:translateY(-3px);background:var(--s2)}
+.lt{font-family:'Syne',sans-serif;font-size:.98rem;font-weight:700;margin-bottom:7px}
+.ld{font-size:.84rem;color:var(--muted2);line-height:1.6;margin-bottom:14px}
+.lm{display:flex;gap:8px}
+.l-time{font-size:.73rem;color:var(--muted);background:var(--s2);padding:3px 10px;border-radius:5px}
+.l-lvl{font-size:.73rem;color:var(--green);background:rgba(61,255,160,.08);border:1px solid rgba(61,255,160,.14);padding:3px 10px;border-radius:5px}
+
+/* ── LESSON ── */
+.lesson-wrap{max-width:700px;margin:0 auto;padding:96px 24px 60px}
+.back-btn{display:inline-flex;align-items:center;gap:7px;color:var(--muted2);font-size:.87rem;cursor:pointer;margin-bottom:32px;transition:color .2s;border:none;background:none;font-family:'DM Sans',sans-serif}
+.back-btn:hover{color:var(--text)}
+.lesson-h{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:800;letter-spacing:-.025em;margin-bottom:14px;line-height:1.1}
+.lesson-body p{font-size:.95rem;line-height:1.85;color:rgba(238,242,255,.82);margin-bottom:18px}
+.lesson-body h3{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin:28px 0 10px}
+.lesson-analogy{background:rgba(61,255,160,.05);border:1px solid rgba(61,255,160,.13);border-radius:12px;padding:18px 20px;margin:22px 0;font-size:.92rem;line-height:1.75;color:var(--green)}
+.quiz{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:32px}
+.quiz-t{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;margin-bottom:16px}
+.quiz-q{font-size:.92rem;margin-bottom:14px;line-height:1.65;color:var(--muted2)}
+.quiz-opts{display:flex;flex-direction:column;gap:8px}
+.qo{background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:11px 16px;cursor:pointer;font-size:.87rem;transition:all .2s;text-align:left;color:var(--text);font-family:'DM Sans',sans-serif}
+.qo:hover{border-color:rgba(61,255,160,.28);background:rgba(61,255,160,.04)}
+.qo.correct{border-color:var(--green);background:rgba(61,255,160,.09);color:var(--green)}
+.qo.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+.lesson-actions{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+
+/* ── CHAT ── */
+.chat-page{display:flex;flex-direction:column;height:100vh;padding-top:65px}
+.chat-msgs{flex:1;overflow-y:auto;padding:24px;display:flex;flex-direction:column;gap:16px;max-width:760px;margin:0 auto;width:100%;scrollbar-width:thin;scrollbar-color:var(--s3) transparent}
+.msg{display:flex;gap:11px;align-items:flex-start;animation:fadeUp .3s ease}
+.msg.user{flex-direction:row-reverse}
+.av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;flex-shrink:0;font-family:'Syne',sans-serif}
+.av.bot{background:rgba(61,255,160,.1);border:1px solid rgba(61,255,160,.2);color:var(--green)}
+.av.user{background:rgba(77,159,255,.1);border:1px solid rgba(77,159,255,.2);color:var(--blue)}
+.bubble{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:13px 17px;font-size:.9rem;line-height:1.7;max-width:580px}
+.msg.user .bubble{background:rgba(77,159,255,.08);border-color:rgba(77,159,255,.18)}
+.chat-lang{display:flex;align-items:center;gap:10px;padding:8px 24px;background:rgba(61,255,160,.04);border-bottom:1px solid var(--border);font-size:.78rem;color:var(--muted2);max-width:760px;margin:0 auto;width:100%}
+.chat-lang select{background:var(--s1);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:3px 8px;font-size:.78rem;outline:none;cursor:pointer}
+.chat-foot{border-top:1px solid var(--border);padding:14px 24px;background:rgba(6,9,18,.9);backdrop-filter:blur(20px)}
+.chat-row{display:flex;gap:10px;max-width:760px;margin:0 auto;align-items:flex-end}
+.chat-in{flex:1;background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:12px 18px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.92rem;outline:none;transition:border-color .2s;resize:none;min-height:46px;max-height:140px;overflow-y:auto;line-height:1.5}
+.chat-in:focus{border-color:rgba(61,255,160,.35)}
+.chat-send{background:var(--green);color:#060912;border:none;border-radius:12px;width:46px;height:46px;cursor:pointer;font-size:1.1rem;transition:opacity .2s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 .chat-send:hover{opacity:.85}
-/* Admin */
-.admin-wrap{padding:100px 24px 60px;max-width:1000px;margin:0 auto}
-.admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:12px}
-.admin-title{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800}
-.admin-badge{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.25);color:var(--accent3);font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 12px;border-radius:6px}
-.activity-list{background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-.activity-row{display:flex;align-items:center;gap:16px;padding:14px 20px;border-bottom:1px solid var(--border);font-size:.87rem}
-.activity-row:last-child{border-bottom:none}
-.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.activity-dot.green{background:var(--accent)}
-.activity-dot.blue{background:var(--accent2)}
-.activity-dot.red{background:var(--accent3)}
-.activity-time{color:var(--muted);font-size:.78rem;margin-left:auto}
-.chart-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:16px}
-.chart-title{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:20px}
-.bars{display:flex;align-items:flex-end;gap:8px;height:80px}
-.bar{flex:1;background:rgba(77,255,160,.2);border-radius:4px 4px 0 0;position:relative;transition:background .2s;cursor:default}
-.bar:hover{background:rgba(77,255,160,.4)}
-.bar-lbl{font-size:.65rem;color:var(--muted);text-align:center;margin-top:6px}
-/* Pricing page */
-.pricing-page{padding:100px 24px 60px;max-width:900px;margin:0 auto;text-align:center}
-.pricing-toggle{display:inline-flex;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:48px}
-.ptog-btn{padding:8px 20px;border-radius:7px;font-size:.87rem;cursor:pointer;transition:all .2s;border:none;background:none;color:var(--muted)}
-.ptog-btn.active{background:var(--accent);color:#050810;font-weight:500}
+.img-upload-btn{width:46px;height:46px;background:var(--s1);border:1px solid var(--border2);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;flex-shrink:0;transition:all .2s;user-select:none}
+.img-upload-btn:hover{border-color:rgba(61,255,160,.35);background:rgba(61,255,160,.06)}
+.img-preview{position:relative;display:inline-block}
+.img-preview img{width:64px;height:64px;object-fit:cover;border-radius:9px;border:1px solid var(--border2);display:block}
+.img-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--red);border-radius:50%;border:none;color:#fff;font-size:.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.msg-img{max-width:240px;border-radius:10px;border:1px solid var(--border2);margin-top:8px;display:block}
+
+.ldots span{animation:ld 1.4s ease-in-out infinite;display:inline-block;width:6px;height:6px;background:var(--muted2);border-radius:50%;margin:0 2px}
+.ldots span:nth-child(2){animation-delay:.2s}
+.ldots span:nth-child(3){animation-delay:.4s}
+@keyframes ld{0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* ── PRICING PAGE ── */
+.pricing-page{padding:100px 24px 60px;max-width:860px;margin:0 auto;text-align:center}
+.ptog{display:inline-flex;background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:48px}
+.ptog button{padding:8px 22px;border-radius:7px;font-size:.86rem;cursor:pointer;border:none;background:none;color:var(--muted2);font-family:'DM Sans',sans-serif;transition:all .2s}
+.ptog button.on{background:var(--green);color:#060912;font-weight:500}
+
+/* ── ADMIN ── */
+.admin-wrap{padding:100px 24px 60px;max-width:980px;margin:0 auto}
+.adm-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:12px}
+.adm-badge{background:rgba(255,107,107,.1);border:1px solid rgba(255,107,107,.22);color:var(--red);font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:5px 13px;border-radius:7px}
+.chart-wrap{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px;margin-top:14px}
+.chart-t{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;margin-bottom:20px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:72px}
+.bar{flex:1;background:rgba(61,255,160,.18);border-radius:4px 4px 0 0;transition:background .2s;cursor:default;position:relative}
+.bar:hover{background:rgba(61,255,160,.38)}
+.bar-lbls{display:flex;gap:8px;margin-top:6px}
+.bar-lbl{flex:1;font-size:.65rem;color:var(--muted);text-align:center}
+.act-list{background:var(--s1);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.act-row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);font-size:.86rem}
+.act-row:last-child{border-bottom:none}
+.adot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.adot.g{background:var(--green)}.adot.b{background:var(--blue)}.adot.r{background:var(--red)}
+.act-time{color:var(--muted);font-size:.76rem;margin-left:auto;white-space:nowrap}
+.setup-box{margin-top:16px;padding:18px;background:var(--s1);border:1px solid rgba(77,159,255,.15);border-radius:12px}
+.setup-box p{font-size:.84rem;color:var(--muted2);margin-bottom:12px}
+.setup-box code{font-size:.77rem;color:var(--blue);display:block;background:var(--s2);padding:12px 16px;border-radius:8px;line-height:1.8;font-family:monospace}
+
 /* Notification */
-.notif{position:fixed;bottom:24px;right:24px;background:var(--surface2);border:1px solid rgba(77,255,160,.25);color:var(--text);padding:14px 20px;border-radius:12px;font-size:.88rem;z-index:9000;animation:slideUp .3s ease;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:300px}
-.notif.hide{animation:slideDown .3s ease forwards}
-@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideDown{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(20px)}}
-/* Responsive */
-@media(max-width:768px){
+.notif{position:fixed;bottom:24px;right:24px;background:var(--s2);border:1px solid rgba(61,255,160,.22);color:var(--text);padding:13px 20px;border-radius:12px;font-size:.87rem;z-index:9000;box-shadow:0 8px 32px rgba(0,0,0,.4);max-width:300px;animation:fadeUp .3s ease}
+.notif.hide{animation:slideD .3s ease forwards}
+@keyframes slideD{to{opacity:0;transform:translateY(16px)}}
+
+/* AI loading */
+.ai-generating{display:flex;align-items:center;gap:10px;font-size:.87rem;color:var(--muted2);padding:10px 0}
+
+@media(max-width:900px){.feat-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){
   nav{padding:14px 18px}
   .nav-links{display:none}
-  .steps-row{grid-template-columns:1fr}
+  .steps{grid-template-columns:1fr}
   .price-grid{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
   footer{flex-direction:column;text-align:center}
 }
-.loading-dots span{animation:ldot 1.4s ease-in-out infinite;display:inline-block}
-.loading-dots span:nth-child(2){animation-delay:.2s}
-.loading-dots span:nth-child(3){animation-delay:.4s}
-@keyframes ldot{0%,80%,100%{transform:scale(0);opacity:.4}40%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- Cursor -->
-<div class="cur" id="cur"></div>
-<div class="cur-r" id="curR"></div>
+<div id="cur"></div>
+<div id="curR"></div>
 
 <!-- NAV -->
-<nav id="mainNav">
-  <div class="nav-logo" onclick="navigate('home')">6thGrader <span class="logo-b">Beta</span></div>
+<nav>
+  <div class="nav-logo" onclick="go('home')">6thGrader <span>Beta</span></div>
   <ul class="nav-links">
-    <li><a onclick="navigate('subjects')">Subjects</a></li>
-    <li><a onclick="navigate('chat')">Chatbot</a></li>
-    <li><a onclick="navigate('pricing')">Pricing</a></li>
-    <li><a onclick="navigate('dashboard')" id="dashLink" style="display:none">Dashboard</a></li>
-    <li><a onclick="navigate('signup')" class="nav-cta" id="signupNavBtn">Get started free</a></li>
-    <li><a onclick="logout()" id="logoutBtn" style="display:none;color:var(--muted)">Log out</a></li>
+    <li><a onclick="go('subjects')">Subjects</a></li>
+    <li><a onclick="go('chat')">Chatbot</a></li>
+    <li><a onclick="go('pricing')">Pricing</a></li>
+    <li id="dashNav" style="display:none"><a onclick="go('dashboard')">Dashboard</a></li>
+    <li><a class="nav-cta" id="navCta" onclick="go('signup')">Get started free</a></li>
+    <li id="logoutNav" style="display:none"><a onclick="logout()" style="color:var(--muted)">Log out</a></li>
   </ul>
 </nav>
 
-<!-- ===== HOME PAGE ===== -->
+<!-- ════════════════ HOME ════════════════ -->
 <div class="page active" id="page-home">
   <section class="hero">
     <div class="hero-grid"></div>
-    <div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
-    <div class="eyebrow"><div class="eyebrow-dot"></div>AI-powered learning for everyone</div>
-    <h1 class="hero-title">Understand <span class="grad">anything</span><br>like a 6th grader.</h1>
-    <p class="hero-sub">Paste any topic, concept, or document. Get a crystal-clear explanation in seconds — with analogies, visuals, and interactive quizzes.</p>
-    <p class="hero-counter"><strong id="conceptCount">347,129</strong> concepts simplified and counting</p>
-    <div class="demo-box">
-      <input class="demo-input" id="demoInput" type="text" placeholder="Try: What is inflation? What is blockchain?"/>
-      <button class="demo-btn" onclick="runDemo()">Explain →</button>
+    <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+
+    <div class="eyebrow"><div class="edot"></div>AI-powered learning · Any language · Any topic</div>
+
+    <h1 class="hero-title">Understand <span class="g">anything</span><br>like a 6th grader.</h1>
+
+    <p class="hero-sub">Paste any topic, concept, or question in any language. Get a clear, simple explanation in seconds — with analogies, steps, and quizzes.</p>
+
+    <p class="hero-count"><strong id="conceptCount">347,129</strong> concepts simplified and counting</p>
+
+    <div class="demo-wrap">
+      <div class="demo-box">
+        <input id="demoIn" type="text" placeholder="Try anything: What is blockchain? ما هو التضخم؟ 什么是AI?"/>
+        <button onclick="runDemo()">Explain →</button>
+      </div>
     </div>
-    <div class="suggestions">
-      <div class="pill" onclick="setDemo('What is compound interest?')">Compound interest</div>
-      <div class="pill" onclick="setDemo('How does the stock market work?')">Stock market</div>
-      <div class="pill" onclick="setDemo('What is machine learning?')">Machine learning</div>
-      <div class="pill" onclick="setDemo('What is inflation?')">Inflation</div>
+    <div class="pills" style="margin-bottom:0;max-width:600px">
+      <div class="pill" onclick="sd('What is compound interest?')">Compound interest</div>
+      <div class="pill" onclick="sd('How does the stock market work?')">Stock market</div>
+      <div class="pill" onclick="sd('What is machine learning?')">Machine learning</div>
+      <div class="pill" onclick="sd('What is inflation?')">Inflation</div>
     </div>
+
     <div class="demo-out" id="demoOut">
       <div class="out-card">
-        <div class="out-lbl">🤖 6th Grade Explanation</div>
-        <div class="out-text" id="outText"></div>
-        <div class="out-analogy" id="outAnalogy"></div>
-        <div id="outStepsWrap" class="out-section" style="display:none">
-          <div class="out-sec-title">Step-by-step breakdown</div>
+        <div class="out-lbl">6th Grade Explanation</div>
+        <div id="outText" class="out-text"></div>
+        <div id="outAnalogy" class="out-analogy" style="display:none"></div>
+        <div id="outStepsWrap" class="out-sec" style="display:none">
+          <div class="out-sec-lbl">Step-by-step breakdown</div>
           <div class="out-steps" id="outSteps"></div>
         </div>
-        <div id="outTermsWrap" class="out-section" style="display:none">
-          <div class="out-sec-title">Key terms</div>
+        <div id="outTermsWrap" class="out-sec" style="display:none">
+          <div class="out-sec-lbl">Key terms</div>
           <div class="out-terms" id="outTerms"></div>
         </div>
       </div>
@@ -310,951 +365,861 @@ footer{border-top:1px solid var(--border);padding:36px 48px;display:flex;justify
   </section>
 
   <div class="stats rev">
-    <div><div class="stat-n" id="statUsers">0</div><div class="stat-l">Total users</div></div>
+    <div><div class="stat-n" id="statU">247</div><div class="stat-l">Total users</div></div>
     <div><div class="stat-n">50+</div><div class="stat-l">Subjects covered</div></div>
-    <div><div class="stat-n" id="statExpls">0</div><div class="stat-l">Explanations generated</div></div>
-    <div><div class="stat-n">$8</div><div class="stat-l">Pro plan / month</div></div>
+    <div><div class="stat-n" id="statE">4,821</div><div class="stat-l">Explanations generated</div></div>
+    <div><div class="stat-n">100+</div><div class="stat-l">Languages supported</div></div>
   </div>
 
   <section class="sec">
     <div class="sec-in">
-      <p class="sec-lbl rev">Core features</p>
-      <h2 class="sec-title rev">Learning, <em>reimagined.</em></h2>
-      <p class="sec-sub rev">Everything you need to understand any topic — without the confusion.</p>
+      <p class="lbl rev">Core features</p>
+      <h2 class="stitle rev">Learning, <em>reimagined.</em></h2>
+      <p class="ssub rev">Everything you need to understand any topic — in your language, at your pace.</p>
       <div class="feat-grid rev">
-        <div class="feat-card" onclick="navigate('chat')">
-          <div class="feat-icon">🧠</div>
-          <div class="feat-title">AI Explanation Engine</div>
-          <div class="feat-desc">Paste any text, link, or PDF. Get a clean, simple explanation instantly — no jargon, no fluff.</div>
-        </div>
-        <div class="feat-card" onclick="navigate('chat')">
-          <div class="feat-icon">💬</div>
-          <div class="feat-title">Interactive Chatbot</div>
-          <div class="feat-desc">Ask follow-up questions in plain language. The bot simplifies further on demand.</div>
-        </div>
-        <div class="feat-card" onclick="navigate('subjects')">
-          <div class="feat-icon">🗺️</div>
-          <div class="feat-title">Subject Explorer</div>
-          <div class="feat-desc">Browse Finance, AI, Science, History and more — each with simplified lessons and quizzes.</div>
-        </div>
-        <div class="feat-card" onclick="navigate('subjects')">
-          <div class="feat-icon">🎯</div>
-          <div class="feat-title">Interactive Tasks</div>
-          <div class="feat-desc">Short, fun exercises that test understanding. Learn by doing — not just reading.</div>
-        </div>
-        <div class="feat-card" onclick="navigate('subjects')">
-          <div class="feat-icon">🛤️</div>
-          <div class="feat-title">Learning Paths</div>
-          <div class="feat-desc">Structured skill paths from beginner to advanced. Learn trading, programming, economics step by step.</div>
-        </div>
-        <div class="feat-card" onclick="navigate('dashboard')">
-          <div class="feat-icon">📄</div>
-          <div class="feat-title">Upload & Simplify</div>
-          <div class="feat-desc">Upload research papers, contracts, or articles. Get a plain-language summary with key points.</div>
-        </div>
+        <div class="feat" onclick="go('chat')"><div class="fi">🧠</div><div class="ft">AI Explanation Engine</div><div class="fd">Ask anything in any language. Get clear, jargon-free explanations powered by Claude AI — the world's most advanced AI.</div></div>
+        <div class="feat" onclick="go('chat')"><div class="fi">💬</div><div class="ft">Multilingual Chatbot</div><div class="fd">Chat in English, Arabic, Chinese, Spanish, Georgian, or any language. The bot always replies in your language.</div></div>
+        <div class="feat" onclick="go('subjects')"><div class="fi">🗺️</div><div class="ft">Subject Explorer</div><div class="fd">Browse Finance, AI, Science, History and more — each with simplified lessons, diagrams, and quizzes.</div></div>
+        <div class="feat" onclick="go('subjects')"><div class="fi">🎯</div><div class="ft">Interactive Quizzes</div><div class="fd">Test your understanding after every lesson with quick, fun quizzes designed for real learning.</div></div>
+        <div class="feat" onclick="go('subjects')"><div class="fi">🛤️</div><div class="ft">Learning Paths</div><div class="fd">Structured paths from beginner to advanced. Learn trading, programming, or economics step by step.</div></div>
+        <div class="feat" onclick="go('dashboard')"><div class="fi">📊</div><div class="ft">Personal Dashboard</div><div class="fd">Track your progress, lessons completed, and learning streak — all in one place.</div></div>
       </div>
     </div>
   </section>
 
-  <section class="sec how-bg">
+  <section class="sec how">
     <div class="sec-in">
-      <p class="sec-lbl rev">How it works</p>
-      <h2 class="sec-title rev">Three steps to clarity.</h2>
-      <div class="steps-row">
-        <div class="step-card rev"><div class="step-n2">01</div><div class="step-title">Paste anything</div><div class="step-desc">A question, a concept, a document, a link. Any topic from any field.</div></div>
-        <div class="step-card rev" style="transition-delay:.1s"><div class="step-n2">02</div><div class="step-title">AI breaks it down</div><div class="step-desc">Our engine generates a simple explanation, real-life analogy, and visual breakdown in seconds.</div></div>
-        <div class="step-card rev" style="transition-delay:.2s"><div class="step-n2">03</div><div class="step-title">Learn & test yourself</div><div class="step-desc">Take a quick quiz, ask follow-up questions, or explore related topics — all in one place.</div></div>
+      <p class="lbl rev">How it works</p>
+      <h2 class="stitle rev">Three steps to clarity.</h2>
+      <div class="steps">
+        <div class="step rev"><div class="snum">01</div><div class="stit">Ask anything</div><div class="sdesc">Type any question in any language. A concept, a document, a topic — anything in the world.</div></div>
+        <div class="step rev" style="transition-delay:.1s"><div class="snum">02</div><div class="stit">AI breaks it down</div><div class="sdesc">Claude AI generates a simple explanation, a real-life analogy, and a step-by-step breakdown instantly.</div></div>
+        <div class="step rev" style="transition-delay:.2s"><div class="snum">03</div><div class="stit">Learn & test yourself</div><div class="sdesc">Take a quiz, ask follow-up questions, or explore related topics — all in one place, in your language.</div></div>
       </div>
     </div>
   </section>
 
-  <section class="sec" id="home-subjects">
+  <section class="sec">
     <div class="sec-in">
-      <p class="sec-lbl rev">Explore</p>
-      <h2 class="sec-title rev">Every subject, simplified.</h2>
+      <p class="lbl rev">Explore</p>
+      <h2 class="stitle rev">Every subject, simplified.</h2>
       <div class="subj-grid rev">
-        <div class="subj-tag" onclick="navigate('subject','finance')"><span>💰</span> Finance</div>
-        <div class="subj-tag" onclick="navigate('subject','trading')"><span>📈</span> Trading</div>
-        <div class="subj-tag" onclick="navigate('subject','economics')"><span>📊</span> Economics</div>
-        <div class="subj-tag" onclick="navigate('subject','ai')"><span>🤖</span> Artificial Intelligence</div>
-        <div class="subj-tag" onclick="navigate('subject','programming')"><span>💻</span> Programming</div>
-        <div class="subj-tag" onclick="navigate('subject','science')"><span>🔬</span> Science</div>
-        <div class="subj-tag" onclick="navigate('subject','math')"><span>🧮</span> Mathematics</div>
-        <div class="subj-tag" onclick="navigate('subject','psychology')"><span>🧠</span> Psychology</div>
-        <div class="subj-tag" onclick="navigate('subject','business')"><span>🏢</span> Business</div>
-        <div class="subj-tag" onclick="navigate('subject','health')"><span>💊</span> Health</div>
-        <div class="subj-tag" onclick="navigate('subject','history')"><span>📜</span> History</div>
-        <div class="subj-tag" onclick="navigate('subject','philosophy')"><span>🌍</span> Philosophy</div>
+        <div class="subj" onclick="go('subject','finance')"><span>💰</span>Finance</div>
+        <div class="subj" onclick="go('subject','trading')"><span>📈</span>Trading</div>
+        <div class="subj" onclick="go('subject','economics')"><span>📊</span>Economics</div>
+        <div class="subj" onclick="go('subject','ai')"><span>🤖</span>Artificial Intelligence</div>
+        <div class="subj" onclick="go('subject','programming')"><span>💻</span>Programming</div>
+        <div class="subj" onclick="go('subject','science')"><span>🔬</span>Science</div>
+        <div class="subj" onclick="go('subject','math')"><span>🧮</span>Mathematics</div>
+        <div class="subj" onclick="go('subject','psychology')"><span>🧠</span>Psychology</div>
+        <div class="subj" onclick="go('subject','business')"><span>🏢</span>Business</div>
+        <div class="subj" onclick="go('subject','health')"><span>💊</span>Health</div>
+        <div class="subj" onclick="go('subject','history')"><span>📜</span>History</div>
+        <div class="subj" onclick="go('subject','philosophy')"><span>🌍</span>Philosophy</div>
       </div>
     </div>
   </section>
 
-  <section class="sec how-bg" id="home-pricing">
+  <section class="sec price-sec">
     <div class="sec-in" style="text-align:center">
-      <p class="sec-lbl rev">Pricing</p>
-      <h2 class="sec-title rev">Simple, honest pricing.</h2>
-      <p class="sec-sub rev" style="margin:0 auto">Start free. Upgrade when you're ready.</p>
+      <p class="lbl rev">Pricing</p>
+      <h2 class="stitle rev">Simple, honest pricing.</h2>
+      <p class="ssub rev" style="margin:0 auto">Start free. Upgrade when you're ready.</p>
       <div class="price-grid">
-        <div class="price-card rev">
-          <div class="price-tier">Free</div>
-          <div class="price-amt">$0 <span>/ month</span></div>
-          <div class="price-sub">No credit card needed</div>
-          <ul class="price-feats">
-            <li><span class="ck">✓</span> 10 explanations per day</li>
-            <li><span class="ck">✓</span> Basic chatbot access</li>
-            <li><span class="ck">✓</span> Subject explorer</li>
-            <li><span class="ck">✓</span> Interactive tasks</li>
+        <div class="pc rev">
+          <div class="ptier">Free</div>
+          <div class="pamt">$0 <small>/ month</small></div>
+          <div class="psub">No credit card needed</div>
+          <ul class="pfeats">
+            <li><span class="ck">✓</span>10 explanations per day</li>
+            <li><span class="ck">✓</span>Basic chatbot</li>
+            <li><span class="ck">✓</span>Subject explorer</li>
+            <li><span class="ck">✓</span>Interactive quizzes</li>
           </ul>
-          <button class="btn btn-surface" onclick="navigate('signup')">Get started free</button>
+          <button class="btn btn-ghost" onclick="go('signup')">Get started free</button>
         </div>
-        <div class="price-card feat2 rev" style="transition-delay:.1s">
-          <div class="price-badge">Most popular</div>
-          <div class="price-tier">Pro</div>
-          <div class="price-amt">$8 <span>/ month</span></div>
-          <div class="price-sub">Or $75/year — save 22%</div>
-          <ul class="price-feats">
-            <li><span class="ck">✓</span> Unlimited explanations</li>
-            <li><span class="ck">✓</span> Unlimited chatbot</li>
-            <li><span class="ck">✓</span> Document & PDF uploads</li>
-            <li><span class="ck">✓</span> Advanced diagrams</li>
-            <li><span class="ck">✓</span> Full learning paths</li>
-            <li><span class="ck">✓</span> Saved history & dashboard</li>
+        <div class="pc pro rev" style="transition-delay:.1s">
+          <div class="pbadge">Most popular</div>
+          <div class="ptier">Pro</div>
+          <div class="pamt">$8 <small>/ month</small></div>
+          <div class="psub">Or $75/year — save 22%</div>
+          <ul class="pfeats">
+            <li><span class="ck">✓</span>Unlimited explanations</li>
+            <li><span class="ck">✓</span>Unlimited AI chatbot</li>
+            <li><span class="ck">✓</span>All languages</li>
+            <li><span class="ck">✓</span>Document & PDF uploads</li>
+            <li><span class="ck">✓</span>Full learning paths</li>
+            <li><span class="ck">✓</span>Saved history & dashboard</li>
           </ul>
-          <button class="btn btn-pro" onclick="navigate('pricing')">Start Pro — $8/mo →</button>
+          <button class="btn btn-pro" onclick="go('pricing')">Start Pro — $8/mo →</button>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="cta-sec">
-    <div class="cta-bg2"></div>
-    <h2 class="cta-title rev">Start understanding<br><span class="grad">everything</span> today.</h2>
-    <p class="cta-sub rev">Join thousands of students, professionals, and curious minds.</p>
-    <div class="cta-btns rev">
-      <button class="btn btn-green" onclick="navigate('signup')">Get started for free →</button>
-      <button class="btn btn-outline" onclick="navigate('chat')">Try the chatbot</button>
+  <section class="cta">
+    <div class="cta-bg"></div>
+    <h2 class="cta-title rev">Start understanding<br><span class="g">everything</span> today.</h2>
+    <p class="cta-sub rev">Any topic. Any language. Any time.</p>
+    <div class="cta-row rev">
+      <button class="btn btn-g" onclick="go('signup')">Get started for free →</button>
+      <button class="btn btn-o" onclick="go('chat')">Try the AI chatbot</button>
     </div>
   </section>
 
   <footer>
-    <div class="f-logo">6thGrader</div>
-    <div class="f-copy">© 2025 6thGrader. All rights reserved.</div>
-    <div class="f-links">
-      <a onclick="navigate('pricing')">Pricing</a>
-      <a onclick="navigate('subjects')">Subjects</a>
-      <a onclick="navigate('chat')">Chatbot</a>
-      <a onclick="navigate('admin')">Admin</a>
+    <div class="flogo">6thGrader</div>
+    <div class="fcopy">© 2025 6thGrader. All rights reserved.</div>
+    <div class="flinks">
+      <a onclick="go('pricing')">Pricing</a>
+      <a onclick="go('subjects')">Subjects</a>
+      <a onclick="go('chat')">Chatbot</a>
+      <a onclick="go('admin')">Admin</a>
     </div>
   </footer>
 </div>
 
-<!-- ===== SIGNUP PAGE ===== -->
+<!-- ════════════════ SIGNUP ════════════════ -->
 <div class="page" id="page-signup">
-  <div class="auth-wrap">
+  <div class="auth-bg">
     <div class="auth-card">
-      <div class="nav-logo" onclick="navigate('home')" style="margin-bottom:28px;cursor:pointer">6thGrader <span class="logo-b">Beta</span></div>
-      <div class="auth-title">Create account</div>
-      <div class="auth-sub">Start learning for free. No credit card required.</div>
-      <div class="form-group">
-        <label class="form-label">Full name</label>
-        <input class="form-input" id="signupName" type="text" placeholder="Your name"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Email address</label>
-        <input class="form-input" id="signupEmail" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-input" id="signupPass" type="password" placeholder="Min. 6 characters"/>
-      </div>
-      <button class="form-submit" onclick="doSignup()">Create free account →</button>
-      <div class="auth-link">Already have an account? <a onclick="navigate('login')">Log in</a></div>
+      <div class="nav-logo" onclick="go('home')" style="margin-bottom:28px;cursor:pointer">6thGrader <span style="background:var(--green);color:#060912;font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em">Beta</span></div>
+      <div class="auth-h">Create account</div>
+      <div class="auth-s">Start learning for free. No credit card required.</div>
+      <div class="fgrp"><label class="flbl">Full name</label><input class="finp" id="sName" type="text" placeholder="Your name"/></div>
+      <div class="fgrp"><label class="flbl">Email address</label><input class="finp" id="sEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fgrp"><label class="flbl">Password</label><input class="finp" id="sPass" type="password" placeholder="Min. 6 characters"/></div>
+      <button class="fsub" onclick="doSignup()">Create free account →</button>
+      <div class="alink">Already have an account? <a onclick="go('login')">Log in</a></div>
     </div>
   </div>
 </div>
 
-<!-- ===== LOGIN PAGE ===== -->
+<!-- ════════════════ LOGIN ════════════════ -->
 <div class="page" id="page-login">
-  <div class="auth-wrap">
+  <div class="auth-bg">
     <div class="auth-card">
-      <div class="nav-logo" onclick="navigate('home')" style="margin-bottom:28px;cursor:pointer">6thGrader <span class="logo-b">Beta</span></div>
-      <div class="auth-title">Welcome back</div>
-      <div class="auth-sub">Log in to continue learning.</div>
-      <div class="form-group">
-        <label class="form-label">Email address</label>
-        <input class="form-input" id="loginEmail" type="email" placeholder="you@example.com"/>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Password</label>
-        <input class="form-input" id="loginPass" type="password" placeholder="Your password"/>
-      </div>
-      <button class="form-submit" onclick="doLogin()">Log in →</button>
-      <div class="auth-link">Don't have an account? <a onclick="navigate('signup')">Sign up free</a></div>
+      <div class="nav-logo" onclick="go('home')" style="margin-bottom:28px;cursor:pointer">6thGrader <span style="background:var(--green);color:#060912;font-size:.55rem;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.06em">Beta</span></div>
+      <div class="auth-h">Welcome back</div>
+      <div class="auth-s">Log in to continue learning.</div>
+      <div class="fgrp"><label class="flbl">Email</label><input class="finp" id="lEmail" type="email" placeholder="you@example.com"/></div>
+      <div class="fgrp"><label class="flbl">Password</label><input class="finp" id="lPass" type="password" placeholder="Your password"/></div>
+      <button class="fsub" onclick="doLogin()">Log in →</button>
+      <div class="alink">No account? <a onclick="go('signup')">Sign up free</a></div>
     </div>
   </div>
 </div>
 
-<!-- ===== DASHBOARD ===== -->
+<!-- ════════════════ DASHBOARD ════════════════ -->
 <div class="page" id="page-dashboard">
-  <div class="inner-page">
-    <h1 class="sec-title" style="margin-bottom:6px">Welcome back, <span class="grad" id="dashUser">friend</span> 👋</h1>
-    <p style="color:var(--muted);margin-bottom:0">Here's your learning summary.</p>
+  <div class="inner">
+    <h1 class="stitle" style="margin-bottom:6px">Welcome back, <span class="g" id="dashName">friend</span> 👋</h1>
+    <p style="color:var(--muted2);margin-bottom:0">Your learning summary.</p>
     <div class="dash-grid">
-      <div class="dash-card"><div class="dash-num" id="dExpls">0</div><div class="dash-lbl">Explanations generated</div><div class="dash-change">↑ Keep going!</div></div>
-      <div class="dash-card"><div class="dash-num" id="dLessons">0</div><div class="dash-lbl">Lessons completed</div></div>
-      <div class="dash-card"><div class="dash-num" id="dStreak">1</div><div class="dash-lbl">Day streak 🔥</div></div>
-      <div class="dash-card"><div class="dash-num">Free</div><div class="dash-lbl">Current plan</div><div class="dash-change" style="cursor:pointer;text-decoration:underline" onclick="navigate('pricing')">Upgrade to Pro →</div></div>
+      <div class="dc"><div class="dn" id="dE">0</div><div class="dl">Explanations generated</div></div>
+      <div class="dc"><div class="dn" id="dL">0</div><div class="dl">Lessons completed</div></div>
+      <div class="dc"><div class="dn">1</div><div class="dl">Day streak 🔥</div></div>
+      <div class="dc"><div class="dn">Free</div><div class="dl">Current plan</div><div class="dc-ch" onclick="go('pricing')">Upgrade to Pro →</div></div>
     </div>
-    <h2 style="font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:18px">Continue learning</h2>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:16px">Continue learning</h2>
     <div class="subj-grid">
-      <div class="subj-tag" onclick="navigate('subject','finance')"><span>💰</span> Finance</div>
-      <div class="subj-tag" onclick="navigate('subject','trading')"><span>📈</span> Trading</div>
-      <div class="subj-tag" onclick="navigate('subject','ai')"><span>🤖</span> AI</div>
-      <div class="subj-tag" onclick="navigate('chat')"><span>💬</span> Open Chatbot</div>
+      <div class="subj" onclick="go('subject','finance')"><span>💰</span>Finance</div>
+      <div class="subj" onclick="go('subject','trading')"><span>📈</span>Trading</div>
+      <div class="subj" onclick="go('subject','ai')"><span>🤖</span>AI</div>
+      <div class="subj" onclick="go('chat')"><span>💬</span>Open AI Chatbot</div>
     </div>
   </div>
 </div>
 
-<!-- ===== SUBJECTS PAGE ===== -->
+<!-- ════════════════ SUBJECTS ════════════════ -->
 <div class="page" id="page-subjects">
-  <div class="page-hero">
-    <h1>Explore All Subjects</h1>
-    <p>Choose a subject to start learning — everything explained simply.</p>
-  </div>
-  <div class="inner-page">
+  <div class="page-hero"><h1>Explore All Subjects</h1><p>Choose a subject — everything explained simply, in any language.</p></div>
+  <div class="inner" style="padding-top:40px">
     <div class="subj-grid">
-      <div class="subj-tag" onclick="navigate('subject','finance')"><span>💰</span> Finance</div>
-      <div class="subj-tag" onclick="navigate('subject','trading')"><span>📈</span> Trading</div>
-      <div class="subj-tag" onclick="navigate('subject','economics')"><span>📊</span> Economics</div>
-      <div class="subj-tag" onclick="navigate('subject','ai')"><span>🤖</span> Artificial Intelligence</div>
-      <div class="subj-tag" onclick="navigate('subject','programming')"><span>💻</span> Programming</div>
-      <div class="subj-tag" onclick="navigate('subject','science')"><span>🔬</span> Science</div>
-      <div class="subj-tag" onclick="navigate('subject','math')"><span>🧮</span> Mathematics</div>
-      <div class="subj-tag" onclick="navigate('subject','psychology')"><span>🧠</span> Psychology</div>
-      <div class="subj-tag" onclick="navigate('subject','business')"><span>🏢</span> Business</div>
-      <div class="subj-tag" onclick="navigate('subject','health')"><span>💊</span> Health</div>
-      <div class="subj-tag" onclick="navigate('subject','history')"><span>📜</span> History</div>
-      <div class="subj-tag" onclick="navigate('subject','philosophy')"><span>🌍</span> Philosophy</div>
+      <div class="subj" onclick="go('subject','finance')"><span>💰</span>Finance</div>
+      <div class="subj" onclick="go('subject','trading')"><span>📈</span>Trading</div>
+      <div class="subj" onclick="go('subject','economics')"><span>📊</span>Economics</div>
+      <div class="subj" onclick="go('subject','ai')"><span>🤖</span>Artificial Intelligence</div>
+      <div class="subj" onclick="go('subject','programming')"><span>💻</span>Programming</div>
+      <div class="subj" onclick="go('subject','science')"><span>🔬</span>Science</div>
+      <div class="subj" onclick="go('subject','math')"><span>🧮</span>Mathematics</div>
+      <div class="subj" onclick="go('subject','psychology')"><span>🧠</span>Psychology</div>
+      <div class="subj" onclick="go('subject','business')"><span>🏢</span>Business</div>
+      <div class="subj" onclick="go('subject','health')"><span>💊</span>Health</div>
+      <div class="subj" onclick="go('subject','history')"><span>📜</span>History</div>
+      <div class="subj" onclick="go('subject','philosophy')"><span>🌍</span>Philosophy</div>
     </div>
   </div>
 </div>
 
-<!-- ===== SUBJECT DETAIL PAGE ===== -->
+<!-- ════════════════ SUBJECT DETAIL ════════════════ -->
 <div class="page" id="page-subject">
-  <div class="page-hero" id="subjectHero">
-    <h1 id="subjectTitle">Finance</h1>
-    <p id="subjectDesc">Master the fundamentals of money and finance — explained simply.</p>
-  </div>
-  <div class="inner-page">
-    <div class="lesson-grid" id="lessonGrid"></div>
-  </div>
+  <div class="page-hero" id="subjHero"><h1 id="subjTitle">Finance</h1><p id="subjDesc">Master the fundamentals.</p></div>
+  <div class="inner" style="padding-top:40px"><div class="lesson-grid" id="lessonGrid"></div></div>
 </div>
 
-<!-- ===== LESSON PAGE ===== -->
+<!-- ════════════════ LESSON ════════════════ -->
 <div class="page" id="page-lesson">
-  <div class="lesson-wrap">
-    <div class="lesson-back" onclick="goBack()">← Back</div>
-    <div id="lessonContent"></div>
-  </div>
+  <div class="lesson-wrap"><div id="lessonContent"></div></div>
 </div>
 
-<!-- ===== CHAT PAGE ===== -->
+<!-- ════════════════ CHAT ════════════════ -->
 <div class="page" id="page-chat">
-  <div class="chat-wrap">
+  <div class="chat-page">
+    <div class="chat-lang">
+      <span>🌍 Language:</span>
+      <select id="chatLang" onchange="updateLang()">
+        <option value="en">English</option>
+        <option value="ar">العربية (Arabic)</option>
+        <option value="zh">中文 (Chinese)</option>
+        <option value="es">Español (Spanish)</option>
+        <option value="fr">Français (French)</option>
+        <option value="de">Deutsch (German)</option>
+        <option value="ka">ქართული (Georgian)</option>
+        <option value="ru">Русский (Russian)</option>
+        <option value="tr">Türkçe (Turkish)</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+        <option value="pt">Português (Portuguese)</option>
+        <option value="ja">日本語 (Japanese)</option>
+        <option value="ko">한국어 (Korean)</option>
+        <option value="auto">Auto-detect</option>
+      </select>
+      <span style="margin-left:auto;color:var(--green);font-size:.75rem">✓ Powered by Claude AI</span>
+    </div>
     <div class="chat-msgs" id="chatMsgs">
-      <div class="chat-msg">
-        <div class="msg-avatar bot">6</div>
-        <div class="msg-bubble">Hi! I'm your 6th Grade AI tutor 👋 Ask me anything — I'll explain it as simply as possible. Try: <em>"What is compound interest?"</em> or <em>"Explain machine learning"</em></div>
+      <div class="msg">
+        <div class="av bot">6</div>
+        <div class="bubble">Hi! I'm your 6th Grade AI tutor, powered by Claude. 👋<br><br>I can explain <strong>literally any topic in the world</strong> — in any language you choose. Ask me anything: finance, science, history, math, technology, philosophy, or anything else you're curious about!<br><br>Try asking: <em>"What is compound interest?"</em> or <em>"شرح الذكاء الاصطناعي"</em> or <em>"解释区块链"</em></div>
       </div>
     </div>
-    <div class="chat-input-row">
-      <div class="chat-input-inner">
-        <textarea class="chat-input" id="chatInput" placeholder="Ask me anything..." rows="1" onkeydown="chatKeydown(event)"></textarea>
-        <button class="chat-send" onclick="sendChat()">↑</button>
+    <div class="chat-foot">
+      <div id="imgPreviewRow" style="display:none;max-width:760px;margin:0 auto 10px;gap:10px;flex-wrap:wrap;padding:0 4px"></div>
+      <div class="chat-row">
+        <label class="img-upload-btn" title="Attach image (max 3)">
+          <input type="file" id="imgInput" accept="image/*" multiple style="display:none" onchange="handleImgs(event)"/>
+          📎
+        </label>
+        <textarea class="chat-in" id="chatIn" placeholder="Ask anything — or attach an image for homework help, trade analysis..." rows="1" onkeydown="chatKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="chat-send" id="sendBtn" onclick="sendChat()">↑</button>
       </div>
+      <div style="text-align:center;font-size:.71rem;color:var(--muted);margin-top:6px;max-width:760px;margin-left:auto;margin-right:auto">Attach up to 3 images · homework, charts, trade screenshots, diagrams</div>
     </div>
   </div>
 </div>
 
-<!-- ===== PRICING PAGE ===== -->
+<!-- ════════════════ PRICING ════════════════ -->
 <div class="page" id="page-pricing">
   <div class="pricing-page">
-    <p class="sec-lbl" style="margin-bottom:12px">Pricing</p>
-    <h1 class="sec-title">Simple, honest pricing.</h1>
-    <p style="color:var(--muted);margin-bottom:36px">Start free. Upgrade when you're ready.</p>
-    <div class="pricing-toggle">
-      <button class="ptog-btn active" id="togMonth" onclick="setPricingToggle('month')">Monthly</button>
-      <button class="ptog-btn" id="togYear" onclick="setPricingToggle('year')">Yearly <span style="color:var(--accent);font-size:.75rem">Save 22%</span></button>
+    <p class="lbl" style="margin-bottom:12px">Pricing</p>
+    <h1 style="font-family:'Syne',sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-.025em;margin-bottom:14px">Simple, honest pricing.</h1>
+    <p style="color:var(--muted2);margin-bottom:32px">Start free. Upgrade when you're ready.</p>
+    <div class="ptog">
+      <button class="on" id="tm" onclick="setTog('month')">Monthly</button>
+      <button id="ty" onclick="setTog('year')">Yearly <span style="color:var(--green);font-size:.75rem">Save 22%</span></button>
     </div>
-    <div class="price-grid" style="max-width:700px;margin:0 auto">
-      <div class="price-card">
-        <div class="price-tier">Free</div>
-        <div class="price-amt">$0 <span>/ month</span></div>
-        <div class="price-sub">No credit card needed</div>
-        <ul class="price-feats">
-          <li><span class="ck">✓</span> 10 explanations per day</li>
-          <li><span class="ck">✓</span> Basic chatbot access</li>
-          <li><span class="ck">✓</span> Subject explorer</li>
-          <li><span class="ck">✓</span> Interactive tasks</li>
+    <div class="price-grid" style="max-width:680px;margin:0 auto">
+      <div class="pc">
+        <div class="ptier">Free</div>
+        <div class="pamt">$0 <small>/ month</small></div>
+        <div class="psub">No credit card needed</div>
+        <ul class="pfeats">
+          <li><span class="ck">✓</span>10 explanations per day</li>
+          <li><span class="ck">✓</span>Basic AI chatbot</li>
+          <li><span class="ck">✓</span>Subject explorer</li>
+          <li><span class="ck">✓</span>Interactive quizzes</li>
         </ul>
-        <button class="btn btn-surface" onclick="navigate('signup')" style="width:100%;padding:13px">Get started free</button>
+        <button class="btn btn-ghost" onclick="go('signup')" style="width:100%;padding:13px">Get started free</button>
       </div>
-      <div class="price-card feat2" style="position:relative">
-        <div class="price-badge">Most popular</div>
-        <div class="price-tier">Pro</div>
-        <div class="price-amt" id="proPrice">$8 <span>/ month</span></div>
-        <div class="price-sub" id="proSub">Billed monthly</div>
-        <ul class="price-feats">
-          <li><span class="ck">✓</span> Unlimited explanations</li>
-          <li><span class="ck">✓</span> Unlimited chatbot</li>
-          <li><span class="ck">✓</span> Document & PDF uploads</li>
-          <li><span class="ck">✓</span> Advanced diagrams</li>
-          <li><span class="ck">✓</span> Full learning paths</li>
-          <li><span class="ck">✓</span> Saved history & dashboard</li>
-          <li><span class="ck">✓</span> Priority support</li>
+      <div class="pc pro" style="position:relative">
+        <div class="pbadge">Most popular</div>
+        <div class="ptier">Pro</div>
+        <div class="pamt" id="proAmt">$8 <small>/ month</small></div>
+        <div class="psub" id="proSub">Billed monthly</div>
+        <ul class="pfeats">
+          <li><span class="ck">✓</span>Unlimited explanations</li>
+          <li><span class="ck">✓</span>Unlimited AI chatbot</li>
+          <li><span class="ck">✓</span>All 100+ languages</li>
+          <li><span class="ck">✓</span>Document & PDF uploads</li>
+          <li><span class="ck">✓</span>Full learning paths</li>
+          <li><span class="ck">✓</span>Saved history & dashboard</li>
+          <li><span class="ck">✓</span>Priority support</li>
         </ul>
-        <button class="btn btn-pro" onclick="startPro()" style="width:100%;padding:13px" id="proBtnMain">Start Pro — $8/mo →</button>
+        <button class="btn btn-pro" id="proBtn" onclick="startPro()" style="width:100%;padding:13px">Start Pro — $8/mo →</button>
       </div>
     </div>
-    <p style="color:var(--muted);font-size:.82rem;margin-top:28px">🔒 Payments via Lemon Squeezy · Cancel anytime · Available in Georgia ✓</p>
+    <p style="color:var(--muted);font-size:.8rem;margin-top:24px">🔒 Payments via Lemon Squeezy · Cancel anytime · Available in Georgia ✓</p>
   </div>
 </div>
 
-<!-- ===== ADMIN PAGE ===== -->
+<!-- ════════════════ ADMIN ════════════════ -->
 <div class="page" id="page-admin">
   <div class="admin-wrap">
-    <div class="admin-header">
-      <div>
-        <div class="admin-title">Admin Dashboard</div>
-        <p style="color:var(--muted);font-size:.87rem;margin-top:4px">Real-time platform overview</p>
-      </div>
-      <div class="admin-badge">🔒 Admin Only</div>
+    <div class="adm-hdr">
+      <div><h1 style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800">Admin Dashboard</h1><p style="color:var(--muted2);font-size:.87rem;margin-top:4px">Real-time platform overview</p></div>
+      <div class="adm-badge">🔒 Admin Only</div>
     </div>
     <div class="dash-grid">
-      <div class="dash-card"><div class="dash-num" id="adTotal">0</div><div class="dash-lbl">Total users</div><div class="dash-change">↑ growing</div></div>
-      <div class="dash-card"><div class="dash-num" id="adToday">0</div><div class="dash-lbl">Users today</div></div>
-      <div class="dash-card"><div class="dash-num" id="adExpls">0</div><div class="dash-lbl">Total explanations</div></div>
-      <div class="dash-card"><div class="dash-num" id="adPro">0</div><div class="dash-lbl">Pro subscribers</div></div>
-      <div class="dash-card"><div class="dash-num" id="adActive">0</div><div class="dash-lbl">Active now</div></div>
-      <div class="dash-card"><div class="dash-num" id="adRevenue">$0</div><div class="dash-lbl">Est. monthly revenue</div></div>
+      <div class="dc"><div class="dn" id="adU">0</div><div class="dl">Total users</div><div class="dc-ch" style="cursor:default">↑ growing</div></div>
+      <div class="dc"><div class="dn" id="adTd">0</div><div class="dl">Users today</div></div>
+      <div class="dc"><div class="dn" id="adE">0</div><div class="dl">Total explanations</div></div>
+      <div class="dc"><div class="dn" id="adP">0</div><div class="dl">Pro subscribers</div></div>
+      <div class="dc"><div class="dn" id="adAc">0</div><div class="dl">Active now</div></div>
+      <div class="dc"><div class="dn" id="adRev">$0</div><div class="dl">Est. monthly revenue</div></div>
     </div>
-    <div class="chart-bar-wrap">
-      <div class="chart-title">Daily signups (last 7 days)</div>
-      <div class="bars" id="adminBars"></div>
-      <div style="display:flex;gap:8px;margin-top:4px" id="adminBarLabels"></div>
+    <div class="chart-wrap">
+      <div class="chart-t">Daily signups (last 7 days)</div>
+      <div class="bars" id="admBars"></div>
+      <div class="bar-lbls" id="admLbls"></div>
     </div>
-    <h2 style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin:28px 0 14px">Recent activity</h2>
-    <div class="activity-list" id="activityList"></div>
-    <div style="margin-top:28px;padding:20px;background:var(--surface);border:1px solid rgba(255,107,107,.15);border-radius:14px">
-      <p style="font-size:.85rem;color:var(--muted);margin-bottom:14px">⚠️ To connect real analytics, set up <strong style="color:var(--text)">Supabase</strong> or <strong style="color:var(--text)">PostHog</strong> — see instructions below.</p>
-      <code style="font-size:.78rem;color:var(--accent2);display:block;background:var(--surface2);padding:12px;border-radius:8px;line-height:1.7">
-        // 1. Create account at supabase.com (free)<br>
-        // 2. Create table: analytics (event, user_id, timestamp)<br>
-        // 3. Replace SUPABASE_URL and SUPABASE_KEY below<br>
-        // 4. Call trackEvent('explanation') on each action
-      </code>
+    <h2 style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;margin:28px 0 13px">Recent activity</h2>
+    <div class="act-list" id="actList"></div>
+    <div class="setup-box">
+      <p>⚡ To connect real analytics, integrate <strong style="color:var(--text)">PostHog</strong> (free & easy) or <strong style="color:var(--text)">Supabase</strong>:</p>
+      <code>// PostHog — paste this in your &lt;head&gt; tag:<br>!function(t,e){...}(window,document);<br>posthog.init('YOUR_KEY', {api_host:'https://app.posthog.com'})<br><br>// Then track events anywhere:<br>posthog.capture('explanation_generated', {topic: 'inflation'})<br>posthog.capture('user_signed_up', {plan: 'free'})</code>
     </div>
   </div>
 </div>
 
 <script>
-// ===== STATE =====
-const state = {
-  currentPage: 'home',
-  prevPage: 'home',
-  currentSubject: null,
-  currentLesson: null,
-  user: JSON.parse(localStorage.getItem('6tg_user') || 'null'),
-  analytics: JSON.parse(localStorage.getItem('6tg_analytics') || JSON.stringify({
-    totalUsers: 247, todayUsers: 12, explanations: 4821, proUsers: 8, activeNow: 3,
-    signups: [2,5,3,8,4,11,7], users: []
+// ═══════════════════════════════════
+// STATE
+// ═══════════════════════════════════
+const S = {
+  page: 'home', prev: 'home',
+  subject: null, lesson: null,
+  user: JSON.parse(localStorage.getItem('6tg_u') || 'null'),
+  a: JSON.parse(localStorage.getItem('6tg_a') || JSON.stringify({
+    users:247, today:12, expls:4821, pro:8, active:3,
+    signups:[2,5,3,8,4,11,7], log:[]
   }))
 };
 
-// ===== SUBJECT DATA =====
-const SUBJECTS = {
-  finance: { icon:'💰', title:'Finance', desc:'Master the fundamentals of money, investing, and financial literacy.', lessons:[
-    {id:'compound-interest', title:'What is Compound Interest?', desc:'The most powerful force in personal finance — explained simply.', time:'5 min', level:'Beginner'},
-    {id:'budgeting', title:'How to Budget Your Money', desc:'Simple rules to manage income, expenses, and savings.', time:'6 min', level:'Beginner'},
-    {id:'investing-basics', title:'Investing Basics', desc:'How to make your money work for you over time.', time:'8 min', level:'Beginner'},
-    {id:'inflation', title:'What is Inflation?', desc:'Why prices rise and what it means for your money.', time:'5 min', level:'Beginner'},
-    {id:'credit-score', title:'Understanding Credit Scores', desc:'What they are, why they matter, and how to improve yours.', time:'7 min', level:'Intermediate'},
+// ═══════════════════════════════════
+// SUBJECTS & LESSONS DATA
+// ═══════════════════════════════════
+const SUBJS = {
+  finance:{icon:'💰',title:'Finance',desc:'Master money, investing, and financial literacy — explained simply.',lessons:[
+    {id:'compound-interest',title:'What is Compound Interest?',desc:'The most powerful force in personal finance.',time:'5 min',lvl:'Beginner'},
+    {id:'inflation',title:'What is Inflation?',desc:'Why prices rise and what it means for your money.',time:'5 min',lvl:'Beginner'},
+    {id:'budgeting',title:'How to Budget Your Money',desc:'Simple rules to manage income, expenses, and savings.',time:'6 min',lvl:'Beginner'},
+    {id:'investing',title:'Investing Basics',desc:'How to make your money work for you over time.',time:'8 min',lvl:'Beginner'},
+    {id:'credit',title:'Understanding Credit Scores',desc:'What they are, why they matter, how to improve yours.',time:'7 min',lvl:'Intermediate'},
   ]},
-  trading: { icon:'📈', title:'Trading', desc:'Understand markets, stocks, and how trading works — simply.', lessons:[
-    {id:'stock-market', title:'How the Stock Market Works', desc:'Buying and selling pieces of companies — explained simply.', time:'7 min', level:'Beginner'},
-    {id:'buy-sell', title:'Buying and Selling Stocks', desc:'How to actually execute a trade and what it means.', time:'6 min', level:'Beginner'},
-    {id:'risk-reward', title:'Risk vs Reward', desc:'Why higher potential returns always come with higher risk.', time:'5 min', level:'Beginner'},
-    {id:'technical-analysis', title:'Technical Analysis Basics', desc:'Reading charts and spotting patterns in price movements.', time:'10 min', level:'Intermediate'},
+  trading:{icon:'📈',title:'Trading',desc:'Understand markets, stocks, and how trading works — simply.',lessons:[
+    {id:'stock-market',title:'How the Stock Market Works',desc:'Buying and selling pieces of companies — explained simply.',time:'7 min',lvl:'Beginner'},
+    {id:'buy-sell',title:'Buying and Selling Stocks',desc:'How to execute a trade and what it means.',time:'6 min',lvl:'Beginner'},
+    {id:'risk-reward',title:'Risk vs Reward',desc:'Why higher returns always come with higher risk.',time:'5 min',lvl:'Beginner'},
+    {id:'technical',title:'Technical Analysis Basics',desc:'Reading charts and spotting patterns in price movements.',time:'10 min',lvl:'Intermediate'},
   ]},
-  economics: { icon:'📊', title:'Economics', desc:'How economies, markets, and money systems actually work.', lessons:[
-    {id:'supply-demand', title:'Supply and Demand', desc:'The fundamental law that drives all prices everywhere.', time:'6 min', level:'Beginner'},
-    {id:'gdp', title:'What is GDP?', desc:'How economists measure the size and health of an economy.', time:'5 min', level:'Beginner'},
-    {id:'monetary-policy', title:'Monetary Policy', desc:'How central banks control money supply and interest rates.', time:'8 min', level:'Intermediate'},
+  economics:{icon:'📊',title:'Economics',desc:'How economies, markets, and money systems actually work.',lessons:[
+    {id:'supply-demand',title:'Supply and Demand',desc:'The fundamental law that drives all prices everywhere.',time:'6 min',lvl:'Beginner'},
+    {id:'gdp',title:'What is GDP?',desc:'How economists measure the size and health of an economy.',time:'5 min',lvl:'Beginner'},
+    {id:'monetary',title:'Monetary Policy',desc:'How central banks control money supply and interest rates.',time:'8 min',lvl:'Intermediate'},
   ]},
-  ai: { icon:'🤖', title:'Artificial Intelligence', desc:'Understand the technology shaping the future — simply.', lessons:[
-    {id:'what-is-ai', title:'What is Artificial Intelligence?', desc:'The basics of AI — what it is and how it works.', time:'5 min', level:'Beginner'},
-    {id:'machine-learning', title:'Machine Learning Explained', desc:'How computers learn from data without being programmed.', time:'7 min', level:'Beginner'},
-    {id:'neural-networks', title:'Neural Networks Simplified', desc:'The brain-like structures powering modern AI.', time:'8 min', level:'Intermediate'},
-    {id:'chatgpt', title:'How ChatGPT Works', desc:'The technology behind large language models explained simply.', time:'6 min', level:'Beginner'},
+  ai:{icon:'🤖',title:'Artificial Intelligence',desc:'Understand the technology shaping the future — simply.',lessons:[
+    {id:'what-is-ai',title:'What is Artificial Intelligence?',desc:'The basics of AI — what it is and how it works.',time:'5 min',lvl:'Beginner'},
+    {id:'machine-learning',title:'Machine Learning Explained',desc:'How computers learn from data without being programmed.',time:'7 min',lvl:'Beginner'},
+    {id:'neural-networks',title:'Neural Networks Simplified',desc:'The brain-like structures powering modern AI.',time:'8 min',lvl:'Intermediate'},
+    {id:'chatgpt',title:'How ChatGPT Works',desc:'Large language models explained simply.',time:'6 min',lvl:'Beginner'},
   ]},
-  programming: { icon:'💻', title:'Programming', desc:'Learn to code — one simple concept at a time.', lessons:[
-    {id:'what-is-code', title:'What is Code?', desc:'Instructions computers follow — and how humans write them.', time:'4 min', level:'Beginner'},
-    {id:'variables', title:'What is a Variable?', desc:'Boxes that store information — the foundation of all code.', time:'5 min', level:'Beginner'},
-    {id:'functions', title:'What is a Function?', desc:'Reusable mini-programs inside your code.', time:'6 min', level:'Beginner'},
-    {id:'loops', title:'What is a Loop?', desc:'Making computers repeat things so you don\'t have to.', time:'5 min', level:'Beginner'},
+  programming:{icon:'💻',title:'Programming',desc:'Learn to code — one simple concept at a time.',lessons:[
+    {id:'what-is-code',title:'What is Code?',desc:'Instructions computers follow — and how humans write them.',time:'4 min',lvl:'Beginner'},
+    {id:'variables',title:'What is a Variable?',desc:'Boxes that store information — the foundation of all code.',time:'5 min',lvl:'Beginner'},
+    {id:'functions',title:'What is a Function?',desc:'Reusable mini-programs inside your code.',time:'6 min',lvl:'Beginner'},
+    {id:'loops',title:'What is a Loop?',desc:'Making computers repeat things so you don\'t have to.',time:'5 min',lvl:'Beginner'},
   ]},
-  science: { icon:'🔬', title:'Science', desc:'Explore physics, chemistry, and biology — made simple.', lessons:[
-    {id:'how-internet-works', title:'How the Internet Works', desc:'Packets, servers, and protocols — the plumbing of the web.', time:'6 min', level:'Beginner'},
-    {id:'dna', title:'What is DNA?', desc:'The instruction manual inside every living cell.', time:'5 min', level:'Beginner'},
-    {id:'gravity', title:'What is Gravity?', desc:'Why things fall and how it shapes the universe.', time:'5 min', level:'Beginner'},
+  science:{icon:'🔬',title:'Science',desc:'Explore physics, chemistry, and biology — made simple.',lessons:[
+    {id:'internet',title:'How the Internet Works',desc:'Packets, servers, and protocols — the plumbing of the web.',time:'6 min',lvl:'Beginner'},
+    {id:'dna',title:'What is DNA?',desc:'The instruction manual inside every living cell.',time:'5 min',lvl:'Beginner'},
+    {id:'gravity',title:'What is Gravity?',desc:'Why things fall and how it shapes the universe.',time:'5 min',lvl:'Beginner'},
   ]},
-  math: { icon:'🧮', title:'Mathematics', desc:'Numbers, patterns, and logic — made accessible for everyone.', lessons:[
-    {id:'percentages', title:'Percentages Made Simple', desc:'How to calculate and use percentages in everyday life.', time:'5 min', level:'Beginner'},
-    {id:'probability', title:'What is Probability?', desc:'How likely things are to happen — and how to calculate it.', time:'6 min', level:'Beginner'},
-    {id:'statistics', title:'Statistics Basics', desc:'How to understand data, averages, and what numbers tell us.', time:'7 min', level:'Beginner'},
+  math:{icon:'🧮',title:'Mathematics',desc:'Numbers, patterns, and logic — made accessible for everyone.',lessons:[
+    {id:'percentages',title:'Percentages Made Simple',desc:'How to calculate and use percentages in everyday life.',time:'5 min',lvl:'Beginner'},
+    {id:'probability',title:'What is Probability?',desc:'How likely things are to happen — and how to calculate it.',time:'6 min',lvl:'Beginner'},
+    {id:'statistics',title:'Statistics Basics',desc:'How to understand data, averages, and what numbers tell us.',time:'7 min',lvl:'Beginner'},
   ]},
-  psychology: { icon:'🧠', title:'Psychology', desc:'Understand human behavior and the mind — simply.', lessons:[
-    {id:'cognitive-biases', title:'Cognitive Biases', desc:'The mental shortcuts your brain takes — and when they trick you.', time:'7 min', level:'Beginner'},
-    {id:'motivation', title:'How Motivation Works', desc:'The science behind why we do things — and how to use it.', time:'6 min', level:'Beginner'},
+  psychology:{icon:'🧠',title:'Psychology',desc:'Understand human behavior and the mind — simply.',lessons:[
+    {id:'biases',title:'Cognitive Biases',desc:'The mental shortcuts your brain takes — and when they trick you.',time:'7 min',lvl:'Beginner'},
+    {id:'motivation',title:'How Motivation Works',desc:'The science behind why we do things.',time:'6 min',lvl:'Beginner'},
   ]},
-  business: { icon:'🏢', title:'Business', desc:'Learn how businesses work, grow, and create value.', lessons:[
-    {id:'startup-basics', title:'How Startups Work', desc:'From idea to product to revenue — the startup journey.', time:'8 min', level:'Beginner'},
-    {id:'revenue-profit', title:'Revenue vs Profit', desc:'The difference between money coming in and money you keep.', time:'5 min', level:'Beginner'},
-    {id:'marketing-basics', title:'Marketing Basics', desc:'How businesses attract and keep customers — simply.', time:'7 min', level:'Beginner'},
+  business:{icon:'🏢',title:'Business',desc:'Learn how businesses work, grow, and create value.',lessons:[
+    {id:'startup',title:'How Startups Work',desc:'From idea to product to revenue — the startup journey.',time:'8 min',lvl:'Beginner'},
+    {id:'revenue',title:'Revenue vs Profit',desc:'The difference between money in and money you keep.',time:'5 min',lvl:'Beginner'},
+    {id:'marketing',title:'Marketing Basics',desc:'How businesses attract and keep customers — simply.',time:'7 min',lvl:'Beginner'},
   ]},
-  health: { icon:'💊', title:'Health', desc:'Understand your body, nutrition, and how to stay healthy.', lessons:[
-    {id:'how-sleep-works', title:'How Sleep Works', desc:'What happens in your brain while you sleep — and why it matters.', time:'6 min', level:'Beginner'},
-    {id:'nutrition', title:'Nutrition Basics', desc:'What food does in your body and how to eat well — simply.', time:'7 min', level:'Beginner'},
+  health:{icon:'💊',title:'Health',desc:'Understand your body, nutrition, and how to stay healthy.',lessons:[
+    {id:'sleep',title:'How Sleep Works',desc:'What happens in your brain while you sleep.',time:'6 min',lvl:'Beginner'},
+    {id:'nutrition',title:'Nutrition Basics',desc:'What food does in your body and how to eat well.',time:'7 min',lvl:'Beginner'},
   ]},
-  history: { icon:'📜', title:'History', desc:'Key events and eras that shaped our world — simplified.', lessons:[
-    {id:'ww2', title:'World War II Simplified', desc:'The biggest conflict in history — causes, events, and outcome.', time:'10 min', level:'Beginner'},
-    {id:'cold-war', title:'The Cold War Explained', desc:'Decades of tension between superpowers — made simple.', time:'8 min', level:'Beginner'},
+  history:{icon:'📜',title:'History',desc:'Key events and eras that shaped our world — simplified.',lessons:[
+    {id:'ww2',title:'World War II Simplified',desc:'The biggest conflict in history — causes, events, outcome.',time:'10 min',lvl:'Beginner'},
+    {id:'coldwar',title:'The Cold War Explained',desc:'Decades of tension between superpowers — made simple.',time:'8 min',lvl:'Beginner'},
   ]},
-  philosophy: { icon:'🌍', title:'Philosophy', desc:'Big questions about life, reality, and knowledge — simplified.', lessons:[
-    {id:'stoicism', title:'Stoicism Explained', desc:'Ancient wisdom for modern life — how to control your mind.', time:'7 min', level:'Beginner'},
-    {id:'ethics', title:'What is Ethics?', desc:'How to think about right and wrong — simply.', time:'6 min', level:'Beginner'},
+  philosophy:{icon:'🌍',title:'Philosophy',desc:'Big questions about life, reality, and knowledge — simplified.',lessons:[
+    {id:'stoicism',title:'Stoicism Explained',desc:'Ancient wisdom for modern life — how to control your mind.',time:'7 min',lvl:'Beginner'},
+    {id:'ethics',title:'What is Ethics?',desc:'How to think about right and wrong — simply.',time:'6 min',lvl:'Beginner'},
   ]},
 };
 
-// ===== LESSON CONTENT =====
-const LESSONS = {
-  'compound-interest': {
-    title:'What is Compound Interest?', subject:'finance',
-    body:`<p>Compound interest is one of the most powerful forces in personal finance. It means you earn interest not just on your original money, but also on all the interest you've already earned. The longer you leave your money, the faster it grows — because each year the base amount gets bigger.</p>
-    <p>Albert Einstein reportedly called it the "eighth wonder of the world." Even small amounts invested early can grow into life-changing sums over decades, which is why starting to save and invest young is so powerful.</p>
-    <h3>The Formula</h3>
-    <p>The formula is: <strong>A = P(1 + r/n)^(nt)</strong> where P is your starting amount, r is the interest rate, n is how many times per year it compounds, and t is time in years. Don't worry too much about the math — the key point is: more time = dramatically more money.</p>
-    <h3>A Real Example</h3>
-    <p>If you invest $1,000 at 10% annual interest:</p>
-    <p>Year 1: $1,100 &nbsp;→&nbsp; Year 5: $1,610 &nbsp;→&nbsp; Year 10: $2,594 &nbsp;→&nbsp; Year 30: $17,449</p>
-    <p>You added zero extra money — the growth is entirely from compounding.</p>`,
-    analogy:'🌱 Analogy: Imagine a snowball rolling down a hill. It starts small, but as it rolls, it picks up more snow — and the bigger it gets, the more snow it picks up with each rotation. By the time it reaches the bottom, it\'s enormous. Your money works the same way — the earlier you start rolling, the bigger it gets.',
-    quiz:{q:'You invest $500 at 10% annual compound interest. After 2 years, approximately how much do you have?',opts:['$550','$605','$600','$700'],correct:1}
-  },
-  'stock-market': {
-    title:'How the Stock Market Works', subject:'trading',
-    body:`<p>The stock market is a place — both physical and digital — where people buy and sell tiny ownership pieces of companies called stocks or shares. When a company wants to raise money to grow, it sells shares to the public in a process called an IPO (Initial Public Offering).</p>
-    <p>After that, people can freely buy and sell those shares. If the company performs well and makes profits, its stock price goes up and shareholders make money. If it performs badly, the price drops. Millions of trades happen every second.</p>
-    <h3>Why Do Prices Change?</h3>
-    <p>Stock prices change because of supply and demand. If lots of people want to buy a stock, the price goes up. If lots want to sell, it goes down. News, earnings reports, economic data, and even social media can cause prices to move dramatically.</p>
-    <h3>How Do You Make Money?</h3>
-    <p>Two ways: <strong>Capital gains</strong> — you buy at $10, it goes to $15, you sell for $5 profit. Or <strong>Dividends</strong> — some companies share their profits directly with shareholders, like a quarterly payment.</p>`,
-    analogy:'🏪 Analogy: Imagine your friend opens a lemonade stand worth $100. They sell you 10% of it for $10. If the stand becomes popular and is now worth $500, your 10% is worth $50 — you just made $40! But if nobody buys lemonade and the stand is worth $20, your 10% is only $2. That\'s exactly how stocks work.',
-    quiz:{q:'A company has 1,000 shares total. You buy 100 shares. What percentage of the company do you own?',opts:['1%','10%','100%','0.1%'],correct:1}
-  },
-  'what-is-ai': {
-    title:'What is Artificial Intelligence?', subject:'ai',
-    body:`<p>Artificial Intelligence (AI) is the field of computer science focused on building machines that can perform tasks that normally require human intelligence — things like understanding language, recognizing images, making decisions, and learning from experience.</p>
-    <p>AI isn't one single technology — it's a collection of techniques. The most powerful modern AI systems use a technique called machine learning, where computers learn from vast amounts of data instead of being explicitly programmed for every situation.</p>
-    <h3>Narrow AI vs General AI</h3>
-    <p>Almost all AI today is "narrow AI" — it's very good at one specific task. Chess AI beats grandmasters but can't write a poem. A spam filter catches junk email but can't drive a car. True "general AI" — a system as flexible as a human — doesn't exist yet.</p>
-    <h3>AI in Your Life Right Now</h3>
-    <p>AI is already everywhere: your phone's face unlock, Netflix recommendations, Google Maps predictions, spam filters, voice assistants, and even the AI you're talking to right now — 6thGrader runs on AI.</p>`,
-    analogy:'🐶 Analogy: Teaching a dog new tricks. You don\'t explain the physics of "sit" — you show the dog, reward it, and it learns. AI training works the same way: show the system thousands of examples, reward correct answers, and it learns the pattern.',
-    quiz:{q:'Which of these is an example of AI in everyday life?',opts:['A light switch','Netflix recommendations','A paper book','A calculator'],correct:1}
-  },
-  'machine-learning': {
-    title:'Machine Learning Explained', subject:'ai',
-    body:`<p>Machine learning is a branch of AI where computers learn from data instead of being programmed with specific rules. Instead of a developer writing "if this, then that" for every situation, the computer is given thousands of examples and figures out the patterns on its own.</p>
-    <p>It then uses those patterns to make predictions on new data it has never seen before. Machine learning powers things you use every day — Netflix recommendations, spam filters, face recognition on your phone, and the AI behind 6thGrader.</p>
-    <h3>Three Types of Machine Learning</h3>
-    <p><strong>Supervised learning:</strong> You give the computer labeled examples (these photos are cats, those are dogs) and it learns to label new ones.</p>
-    <p><strong>Unsupervised learning:</strong> You give it data with no labels and it finds patterns on its own (like grouping similar customers together).</p>
-    <p><strong>Reinforcement learning:</strong> The computer learns by trial and error, getting rewards for correct actions — like how AlphaGo learned to beat world champions at chess.</p>`,
-    analogy:'🐱 Analogy: Imagine teaching a toddler to recognize cats. You don\'t explain pointy ears or whiskers. You just show them 1,000 pictures of cats and say "cat!" each time. Eventually, the toddler just knows. Machine learning works the same way — enough examples, and the pattern is learned automatically.',
-    quiz:{q:'In machine learning, what does "training data" mean?',opts:['Data the computer creates itself','Examples used to teach the model','Instructions written by programmers','The computer\'s final output'],correct:1}
-  },
-  'inflation': {
-    title:'What is Inflation?', subject:'finance',
-    body:`<p>Inflation is when the prices of everyday things — food, clothes, rent, gas — slowly go up over time. This means the same amount of money buys you less than it did before. It doesn't happen overnight; it usually creeps up little by little each year.</p>
-    <p>Governments and central banks try to keep inflation at a healthy level — usually around 2% per year. When inflation gets too high, people struggle to afford basic necessities. When it's too low, the economy can slow down dangerously.</p>
-    <h3>What Causes Inflation?</h3>
-    <p><strong>Demand-pull:</strong> When too many people want to buy things, prices go up (too much money chasing too few goods).</p>
-    <p><strong>Cost-push:</strong> When production costs rise (like oil prices), companies raise prices to maintain profit.</p>
-    <p><strong>Money supply:</strong> When a government prints too much money, each dollar becomes worth less — like diluting orange juice with too much water.</p>
-    <h3>How It Affects You</h3>
-    <p>Your cash savings lose value over time if kept under a mattress. A $100 bill in 1990 could buy what costs about $230 today. This is why investing — rather than just saving — is important for preserving purchasing power.</p>`,
-    analogy:'🍕 Analogy: Imagine your favorite pizza used to cost $5. A year later, it costs $6. Your allowance is still $10, but now you can only buy 1 pizza instead of 2. Your money didn\'t disappear — but its power did. That loss of purchasing power is exactly what inflation feels like.',
-    quiz:{q:'If inflation is 10% per year, and you have $100 in cash under your mattress, what is it effectively worth after one year?',opts:['$110','$100','$90','$0'],correct:2}
-  },
-  'startup-basics': {
-    title:'How Startups Work', subject:'business',
-    body:`<p>A startup is a young company designed to grow fast by solving a problem in a new or better way. Unlike regular small businesses, startups aim to scale — meaning they want to serve millions of people, not just their local area.</p>
-    <p>The startup journey typically looks like this: Idea → Build a simple version (MVP) → Get early users → Improve → Raise funding → Scale → Become a big company or get acquired.</p>
-    <h3>What Makes a Startup Different?</h3>
-    <p>Most businesses grow linearly — one more customer, one more dollar. Startups are designed to grow exponentially. A software startup can go from 100 to 10,000 users without hiring 100x more people, because software scales automatically.</p>
-    <h3>How Do Startups Make Money?</h3>
-    <p>Common models: <strong>SaaS</strong> (monthly subscriptions, like 6thGrader), <strong>Marketplace</strong> (take a cut of transactions, like Airbnb), <strong>Advertising</strong> (show ads to free users, like Instagram), or <strong>Freemium</strong> (free basic, paid premium).</p>
-    <h3>Funding</h3>
-    <p>Early startups often raise money from angel investors or venture capital firms in exchange for equity (ownership). This lets them grow faster than revenue alone would allow.</p>`,
-    analogy:'🌱 Analogy: A startup is like planting a seed in fast-growing soil. A regular business is a flower — it grows at a natural pace and stays about the same size. A startup is a bamboo plant — it grows slowly at first while building roots, then suddenly shoots up faster than anything around it.',
-    quiz:{q:'What is an MVP in startup terminology?',opts:['Most Valuable Player','Minimum Viable Product','Maximum Value Proposition','Marketing Vision Plan'],correct:1}
-  },
+const LESSON_DATA = {
+  'compound-interest':{title:'What is Compound Interest?',subj:'finance',body:`<p>Compound interest is one of the most powerful forces in personal finance. It means you earn interest not just on your original money, but also on all the interest you've already earned. The longer you leave your money, the faster it grows — because each year the base amount gets bigger and bigger.</p><p>Albert Einstein reportedly called it the "eighth wonder of the world." Even small amounts invested early can grow into life-changing sums over decades, which is why starting to save and invest young is incredibly powerful.</p><h3>A Real Example</h3><p>Invest $1,000 at 10% annual interest. You add nothing extra:</p><p>Year 1: $1,100 → Year 5: $1,610 → Year 10: $2,594 → Year 20: $6,727 → Year 30: $17,449</p><p>Your money grew 17x without you doing anything. That's the magic of compounding.</p><h3>The Rule of 72</h3><p>Divide 72 by your interest rate to find how many years it takes to double your money. At 10% interest: 72 ÷ 10 = 7.2 years to double.</p>`,analogy:'🌱 Analogy: Imagine a snowball rolling down a hill. It starts tiny, but as it rolls, it picks up more snow — and the bigger it gets, the more snow it picks up with each rotation. By the bottom it\'s enormous. Your money works the same way. Start early, let it roll.',quiz:{q:'You invest $1,000 at 10% compound interest. After 2 years, approximately how much do you have?',opts:['$1,200','$1,100','$1,210','$1,020'],c:2}},
+  'stock-market':{title:'How the Stock Market Works',subj:'trading',body:`<p>The stock market is where people buy and sell tiny ownership pieces of companies called stocks or shares. When a company wants to raise money to grow, it sells shares to the public in a process called an IPO (Initial Public Offering). After that, anyone can freely buy or sell those shares.</p><p>If the company grows and profits, its stock price rises and shareholders make money. If it struggles, the price drops. Millions of trades happen every second based on supply, demand, news, and expectations.</p><h3>Two Ways to Make Money</h3><p><strong>Capital gains:</strong> You buy at $10, it rises to $15, you sell — $5 profit per share. <strong>Dividends:</strong> Some companies share profits directly with shareholders quarterly, like a bonus payment.</p><h3>Indexes</h3><p>The S&P 500 tracks the 500 biggest US companies. If "the market" goes up, it usually means the S&P 500 went up. Historically it averages about 10% per year over long periods.</p>`,analogy:'🏪 Analogy: Your friend opens a lemonade stand worth $100. You buy 10% for $10. If it becomes popular and is worth $500, your 10% is worth $50 — a $40 profit! If it fails and drops to $20, your 10% is worth $2. That\'s exactly how owning stocks works.',quiz:{q:'A company has 1,000 shares total and you buy 100. What percentage of the company do you own?',opts:['1%','10%','0.1%','100%'],c:1}},
+  'inflation':{title:'What is Inflation?',subj:'finance',body:`<p>Inflation is when the prices of everyday things — food, clothes, rent, gas — slowly rise over time. This means the same amount of money buys you less than it did before. It doesn't happen overnight; it usually creeps up little by little each year.</p><p>Governments and central banks try to keep inflation at a healthy level — usually around 2% per year. When inflation gets too high, people struggle to afford basics. When it's too low, the economy can stall.</p><h3>What Causes Inflation?</h3><p><strong>Demand-pull:</strong> Too many people want to buy things, so prices rise. <strong>Cost-push:</strong> Production costs rise (like oil), companies raise prices. <strong>Money printing:</strong> When governments print too much money, each dollar buys less — like diluting juice with too much water.</p><h3>How It Affects You</h3><p>A $100 bill in 1990 could buy what costs $230 today. Cash savings lose value over time. This is why investing matters — to stay ahead of inflation.</p>`,analogy:'🍕 Analogy: Your favorite pizza cost $5. Now it costs $6. Your allowance is still $10 — but now you can only buy 1 pizza instead of 2. Your money didn\'t disappear, but its purchasing power did. That\'s inflation.',quiz:{q:'If inflation is 10%/year and you keep $100 under your mattress, what\'s it effectively worth after one year?',opts:['$110','$100','About $90','$0'],c:2}},
+  'what-is-ai':{title:'What is Artificial Intelligence?',subj:'ai',body:`<p>Artificial Intelligence (AI) is the field of computer science focused on building machines that can perform tasks that normally require human intelligence — understanding language, recognizing images, making decisions, and learning from experience.</p><p>Almost all AI today is "narrow AI" — very good at one specific task. Chess AI beats grandmasters but can't write a poem. A spam filter catches junk email but can't drive a car. True "general AI" — as flexible as a human — doesn't exist yet.</p><h3>AI in Your Life Right Now</h3><p>Your phone's face unlock, Netflix recommendations, Google Maps, spam filters, voice assistants, and this very chatbot — 6thGrader runs on Claude AI, one of the world's most advanced AI systems.</p><h3>Why It Matters</h3><p>AI is transforming every industry — healthcare, finance, education, transportation. Understanding it gives you a huge advantage in the coming decades.</p>`,analogy:'🐶 Analogy: Teaching a dog tricks. You don\'t explain the physics of "sit" — you show the dog, reward it, and it learns. AI training works the same: show the system thousands of examples, reward correct answers, and it learns the pattern.',quiz:{q:'Which of these is an example of AI in everyday life?',opts:['A light switch','Netflix recommendations','A paper book','A calculator'],c:1}},
+  'machine-learning':{title:'Machine Learning Explained',subj:'ai',body:`<p>Machine learning is where computers learn from data instead of being programmed with exact rules. You give it thousands of examples and it figures out patterns on its own, then uses those patterns to make predictions on new data it's never seen.</p><h3>Three Types</h3><p><strong>Supervised learning:</strong> You provide labeled examples (these are cats, those are dogs) and it learns to classify new ones. <strong>Unsupervised learning:</strong> Give it unlabeled data and it finds patterns by itself. <strong>Reinforcement learning:</strong> The computer learns by trial and error, getting rewards for correct actions — how AlphaGo learned to beat world champions.</p><h3>Why It Changed Everything</h3><p>Before ML, programmers had to write rules for every situation. With ML, you just provide data and the computer figures out the rules itself. This unlocked capabilities impossible to program manually.</p>`,analogy:'🐱 Analogy: Teaching a toddler to recognize cats. You don\'t explain pointy ears or whiskers — you show them 1,000 cat photos and say "cat!" each time. Eventually they just know. Machine learning is identical.',quiz:{q:'In machine learning, what is "training data"?',opts:['Data the computer generates itself','Examples used to teach the model','Code written by programmers','The model\'s final output'],c:1}},
+  'startup':{title:'How Startups Work',subj:'business',body:`<p>A startup is a young company designed to grow fast by solving a problem in a new or better way. Unlike regular small businesses, startups aim to scale — serving millions of people, not just a local area.</p><p>The startup journey: Idea → MVP (minimal viable product) → Early users → Improve → Fund → Scale → Big company or acquisition.</p><h3>What Makes It Different?</h3><p>Most businesses grow linearly — one more customer, one more dollar. Startups are designed to grow exponentially. A software startup can go from 100 to 10,000 users without hiring proportionally more people, because software scales automatically.</p><h3>Business Models</h3><p><strong>SaaS:</strong> Monthly subscriptions (like 6thGrader). <strong>Marketplace:</strong> Take a cut of transactions (like Airbnb). <strong>Freemium:</strong> Free basic, paid premium. <strong>Advertising:</strong> Free product, revenue from ads.</p>`,analogy:'🌱 Analogy: A startup is like bamboo. It grows slowly at first — building roots underground. Then suddenly it shoots up faster than anything around it. Most people only see the explosive growth, not the years of quiet building before it.',quiz:{q:'What is an MVP in startup terminology?',opts:['Most Valuable Player','Minimum Viable Product','Maximum Value Proposition','Marketing Vision Plan'],c:1}},
 };
 
-// ===== DEMO DATA =====
-const DEMOS = {
-  'inflation': {
-    text:"Inflation is when the prices of everyday things — food, clothes, rent — slowly go up over time. This means the same amount of money buys you less than it did before. Governments try to keep inflation around 2% per year. Too high and people struggle to afford basics; too low and the economy can stall.",
-    analogy:"🍕 Real-life analogy: Your favorite pizza used to cost $5. Now it costs $6. Your allowance is still $10 — but now you can only buy 1 pizza instead of 2. Your money didn't disappear, but its purchasing power did. That's inflation.",
-    steps:["More money circulates → people spend more","Higher demand → businesses can charge more","Prices rise across the board — food, rent, fuel","Your salary buys less than it did before","Central banks raise interest rates to cool spending"],
-    terms:["Purchasing power","CPI","Interest rates","Central bank","Deflation"]
-  },
-  'compound interest': {
-    text:"Compound interest means earning interest not just on your original money, but on all the interest you've already earned too. The longer you leave your money, the faster it grows. $1,000 at 10% annual interest becomes $17,449 after 30 years — without adding a single dollar. Einstein reportedly called it the eighth wonder of the world.",
-    analogy:"🌱 Real-life analogy: A snowball rolling downhill. Tiny at the top. But as it rolls, it collects more snow — and the bigger it gets, the more it collects. By the bottom it's enormous. Your money works the same way. The earlier you start, the bigger the snowball.",
-    steps:["Deposit $1,000 at 10% interest","Year 1: earn $100 → total $1,100","Year 2: earn 10% on $1,100 = $110 → total $1,210","Year 3: earn $121 → total $1,331","After 30 years: $17,449 with zero extra deposits"],
-    terms:["Principal","APY","Time horizon","Simple interest","Rule of 72"]
-  },
-  'stock market': {
-    text:"The stock market is where people buy and sell tiny ownership pieces of companies called stocks. When a company goes public (IPO), it sells shares to raise money. After that, anyone can buy or sell those shares freely. If the company grows and profits, the stock price rises. If it struggles, it falls. Millions of trades happen every second based on supply, demand, and expectations.",
-    analogy:"🏪 Real-life analogy: Your friend opens a lemonade stand worth $100. You buy 10% for $10. If it becomes popular and is worth $500, your 10% is now $50 — a $40 profit. If it fails and drops to $20, your 10% is worth $2. That's exactly how owning stocks works.",
-    steps:["Company lists shares on exchange (NYSE, NASDAQ)","Investors buy shares, giving the company capital","Share price moves on performance + market sentiment","Buy at $10, sell at $15 = $5 profit per share","Dividends may be paid — a portion of profits to shareholders"],
-    terms:["Stock/Share","IPO","Bull market","Bear market","Dividend","Index (S&P 500)"]
-  },
-  'machine learning': {
-    text:"Machine learning is a branch of AI where computers learn from data instead of being programmed with exact rules. You give it thousands of examples and it figures out the patterns on its own. It then uses those patterns to make predictions on new data it's never seen. It powers Netflix recommendations, spam filters, face recognition, and AI assistants like this one.",
-    analogy:"🐱 Real-life analogy: Teaching a toddler to recognize cats. You don't explain pointy ears or whiskers — you just show them 1,000 cat photos and say 'cat!' each time. Eventually they just know. Machine learning is identical — enough examples, and the pattern is learned automatically.",
-    steps:["Collect a large dataset (e.g. 100,000 labeled photos)","Feed data into a model","Model finds patterns and adjusts internal 'weights'","Test on new data it's never seen","If accuracy is good, deploy — if not, retrain"],
-    terms:["Algorithm","Training data","Model","Neural network","Overfitting","Accuracy"]
-  },
-  'blockchain': {
-    text:"A blockchain is a special database that stores records in a permanent chain — once data is written, it can never be changed or deleted. Every new transaction is added to a new block, permanently linked to the ones before it. This chain is stored across thousands of computers worldwide simultaneously, with no single owner. This makes it ultra-secure, transparent, and tamper-proof. Bitcoin uses blockchain, but it's also used in supply chains, contracts, and voting systems.",
-    analogy:"📖 Real-life analogy: A public notebook in the middle of town where everyone has an identical copy. When someone writes a new entry, it's added to everyone's copy at once. Nobody can secretly erase it — because everyone else's copy would instantly show the discrepancy. That's blockchain.",
-    steps:["Transaction is initiated (e.g. sending Bitcoin)","Broadcast to global network of computers (nodes)","Thousands of nodes verify it's legitimate","Transaction bundled into a new block","Block added to the chain permanently — cannot be altered"],
-    terms:["Block","Node","Decentralization","Cryptography","Smart contract","Hash"]
-  },
-};
-
-// ===== NAVIGATION =====
-function navigate(page, param) {
-  state.prevPage = state.currentPage;
-  state.currentPage = page;
+// ═══════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════
+function go(page, param) {
+  S.prev = S.page; S.page = page;
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   window.scrollTo(0,0);
-
-  if (page === 'home') { document.getElementById('page-home').classList.add('active'); }
-  else if (page === 'signup') { document.getElementById('page-signup').classList.add('active'); }
-  else if (page === 'login') { document.getElementById('page-login').classList.add('active'); }
-  else if (page === 'dashboard') {
-    if (!state.user) { navigate('signup'); return; }
-    loadDashboard(); document.getElementById('page-dashboard').classList.add('active');
-  }
-  else if (page === 'subjects') { document.getElementById('page-subjects').classList.add('active'); }
-  else if (page === 'subject') { loadSubjectPage(param); document.getElementById('page-subject').classList.add('active'); }
-  else if (page === 'lesson') { loadLessonPage(param); document.getElementById('page-lesson').classList.add('active'); }
-  else if (page === 'chat') { document.getElementById('page-chat').classList.add('active'); }
-  else if (page === 'pricing') { document.getElementById('page-pricing').classList.add('active'); }
-  else if (page === 'admin') { loadAdmin(); document.getElementById('page-admin').classList.add('active'); }
-
-  // Track page view
-  trackEvent('pageview', page);
+  const pages = {
+    home:'page-home', signup:'page-signup', login:'page-login',
+    dashboard:'page-dashboard', subjects:'page-subjects',
+    subject:'page-subject', lesson:'page-lesson',
+    chat:'page-chat', pricing:'page-pricing', admin:'page-admin'
+  };
+  if (page === 'dashboard' && !S.user) { go('signup'); return; }
+  if (page === 'subject') { loadSubject(param); }
+  if (page === 'lesson') { loadLesson(param); }
+  if (page === 'dashboard') { loadDash(); }
+  if (page === 'admin') { loadAdmin(); }
+  document.getElementById(pages[page] || 'page-home').classList.add('active');
+  track('pageview', page);
   setupReveal();
 }
 
-function goBack() { navigate(state.prevPage || 'home'); }
-
-// ===== AUTH =====
+// ═══════════════════════════════════
+// AUTH
+// ═══════════════════════════════════
 function doSignup() {
-  const name = document.getElementById('signupName').value.trim();
-  const email = document.getElementById('signupEmail').value.trim();
-  const pass = document.getElementById('signupPass').value;
-  if (!name || !email || !pass) { showNotif('⚠️ Please fill in all fields'); return; }
-  if (pass.length < 6) { showNotif('⚠️ Password must be at least 6 characters'); return; }
-  const user = { name, email, joinedAt: new Date().toISOString(), plan: 'free' };
-  localStorage.setItem('6tg_user', JSON.stringify(user));
-  state.user = user;
-  // Update analytics
-  state.analytics.totalUsers++;
-  state.analytics.todayUsers++;
-  state.analytics.users.push({ name, email, time: new Date().toLocaleTimeString() });
-  saveAnalytics();
-  updateNav();
-  showNotif(`🎉 Welcome, ${name}! Account created.`);
-  setTimeout(() => navigate('dashboard'), 800);
+  const n = document.getElementById('sName').value.trim();
+  const e = document.getElementById('sEmail').value.trim();
+  const p = document.getElementById('sPass').value;
+  if (!n||!e||!p) { notif('⚠️ Please fill in all fields'); return; }
+  if (p.length < 6) { notif('⚠️ Password must be at least 6 characters'); return; }
+  S.user = {name:n, email:e, joined:new Date().toISOString(), plan:'free'};
+  localStorage.setItem('6tg_u', JSON.stringify(S.user));
+  S.a.users++; S.a.today++;
+  S.a.log.unshift({dot:'g', text:`New signup: ${n}`, time: new Date().toLocaleTimeString()});
+  saveA(); updateNav();
+  notif(`🎉 Welcome, ${n}! Account created.`);
+  setTimeout(() => go('dashboard'), 700);
 }
-
 function doLogin() {
-  const email = document.getElementById('loginEmail').value.trim();
-  const pass = document.getElementById('loginPass').value;
-  if (!email || !pass) { showNotif('⚠️ Please fill in all fields'); return; }
-  // Simulate login — in production this calls your auth backend
-  const user = { name: email.split('@')[0], email, joinedAt: new Date().toISOString(), plan: 'free' };
-  localStorage.setItem('6tg_user', JSON.stringify(user));
-  state.user = user;
-  updateNav();
-  showNotif(`✓ Logged in as ${user.name}`);
-  setTimeout(() => navigate('dashboard'), 600);
+  const e = document.getElementById('lEmail').value.trim();
+  const p = document.getElementById('lPass').value;
+  if (!e||!p) { notif('⚠️ Please fill in all fields'); return; }
+  S.user = {name: e.split('@')[0], email:e, joined:new Date().toISOString(), plan:'free'};
+  localStorage.setItem('6tg_u', JSON.stringify(S.user));
+  updateNav(); notif('✓ Logged in!');
+  setTimeout(() => go('dashboard'), 600);
 }
-
 function logout() {
-  localStorage.removeItem('6tg_user');
-  state.user = null;
-  updateNav();
-  navigate('home');
-  showNotif('Logged out successfully');
+  localStorage.removeItem('6tg_u'); S.user = null;
+  updateNav(); go('home'); notif('Logged out successfully');
 }
-
 function updateNav() {
-  const btn = document.getElementById('signupNavBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  const dashLink = document.getElementById('dashLink');
-  if (state.user) {
-    btn.textContent = state.user.name.split(' ')[0];
-    btn.onclick = () => navigate('dashboard');
-    logoutBtn.style.display = 'block';
-    dashLink.style.display = 'block';
+  const cta = document.getElementById('navCta');
+  const lo = document.getElementById('logoutNav');
+  const dn = document.getElementById('dashNav');
+  if (S.user) {
+    cta.textContent = S.user.name.split(' ')[0];
+    cta.onclick = () => go('dashboard');
+    lo.style.display = dn.style.display = 'block';
   } else {
-    btn.textContent = 'Get started free';
-    btn.onclick = () => navigate('signup');
-    logoutBtn.style.display = 'none';
-    dashLink.style.display = 'none';
+    cta.textContent = 'Get started free';
+    cta.onclick = () => go('signup');
+    lo.style.display = dn.style.display = 'none';
   }
 }
 
-// ===== DEMO =====
-const DEMO_MAP = {
-  'inflation': DEMOS.inflation, 'what is inflation': DEMOS.inflation,
-  'compound interest': DEMOS['compound interest'], 'what is compound interest': DEMOS['compound interest'],
-  'stock market': DEMOS['stock market'], 'how does the stock market work': DEMOS['stock market'], 'stocks': DEMOS['stock market'],
-  'machine learning': DEMOS['machine learning'], 'what is machine learning': DEMOS['machine learning'],
-  'blockchain': DEMOS.blockchain, 'what is blockchain': DEMOS.blockchain,
-};
+// ═══════════════════════════════════
+// DEMO — uses Claude API
+// ═══════════════════════════════════
+function sd(t) { document.getElementById('demoIn').value = t; runDemo(); }
 
-function setDemo(text) { document.getElementById('demoInput').value = text; runDemo(); }
-
-function runDemo() {
-  const raw = document.getElementById('demoInput').value.trim();
-  if (!raw) return;
-  const input = raw.toLowerCase().replace(/[?!]/g,'').trim();
-  trackEvent('explanation', input);
-  state.analytics.explanations++;
-  saveAnalytics();
-  updateStatCounters();
-
-  let data = null;
-  for (const key of Object.keys(DEMO_MAP)) {
-    if (input.includes(key) || key.includes(input)) { data = DEMO_MAP[key]; break; }
-  }
-  data = data || { text:`Great question! "${raw}" is a concept that can be broken down into simple, understandable pieces. 6thGrader's AI engine would normally generate a full explanation here — with analogies, step-by-step breakdowns, and key terms — all written at 6th grade level. Try one of the example topics to see it in action!`, analogy:'💡 The core idea: if you can\'t explain something simply, you don\'t fully understand it yet. That\'s the philosophy behind 6thGrader.', steps:['Identify the core concept','Break it into simpler parts','Find a relatable everyday analogy','Define the key terms simply'], terms:['Concept','Analogy','Simplification','Key terms'] };
-
-  const outEl = document.getElementById('demoOut');
-  outEl.classList.add('show');
-  document.getElementById('outStepsWrap').style.display = 'none';
-  document.getElementById('outTermsWrap').style.display = 'none';
+async function runDemo() {
+  const topic = document.getElementById('demoIn').value.trim();
+  if (!topic) return;
+  const out = document.getElementById('demoOut');
+  const textEl = document.getElementById('outText');
+  const analogyEl = document.getElementById('outAnalogy');
+  const stepsWrap = document.getElementById('outStepsWrap');
+  const termsWrap = document.getElementById('outTermsWrap');
+  out.classList.add('show');
+  analogyEl.style.display = 'none';
+  stepsWrap.style.display = termsWrap.style.display = 'none';
   document.getElementById('outSteps').innerHTML = '';
   document.getElementById('outTerms').innerHTML = '';
+  textEl.innerHTML = '<span class="ai-generating"><span class="ldots"><span></span><span></span><span></span></span> Generating explanation...</span>';
+  track('demo', topic);
+  S.a.expls++;
+  saveA();
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:1000,
+        messages:[{role:'user', content:`Explain "${topic}" like I'm in 6th grade. 
 
-  const tc = '<span class="tcur"></span>';
-  function typeIt(str, el, cb) {
-    el.innerHTML = tc; let j=0;
-    const t = setInterval(() => {
-      el.innerHTML = str.slice(0,j++) + tc;
-      if (j > str.length) { clearInterval(t); el.innerHTML = str; if (cb) setTimeout(cb, 180); }
-    }, 12);
-  }
-  typeIt(data.text, document.getElementById('outText'), () => {
-    typeIt(data.analogy, document.getElementById('outAnalogy'), () => {
-      if (data.steps) {
-        document.getElementById('outStepsWrap').style.display = 'block';
-        data.steps.forEach((s,i) => setTimeout(() => {
-          const d = document.createElement('div'); d.className='out-step';
-          d.innerHTML=`<span class="sn">${i+1}</span><span>${s}</span>`;
-          document.getElementById('outSteps').appendChild(d);
-        }, i*110));
-        setTimeout(() => {
-          if (data.terms) {
-            document.getElementById('outTermsWrap').style.display='block';
-            data.terms.forEach(t => {
-              const s=document.createElement('span');s.className='kterm';s.textContent=t;
-              document.getElementById('outTerms').appendChild(s);
-            });
-          }
-        }, data.steps.length*110+200);
-      }
+Return ONLY a JSON object with these exact keys (no markdown, no extra text):
+{
+  "explanation": "2-3 sentence clear explanation a 12-year-old would understand",
+  "analogy": "one emoji + a real-life analogy starting with 'Analogy:'",
+  "steps": ["step 1", "step 2", "step 3", "step 4", "step 5"],
+  "terms": ["term1", "term2", "term3", "term4"]
+}`}]
+      })
     });
-  });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || '';
+    let parsed;
+    try { parsed = JSON.parse(raw.replace(/```json|```/g,'').trim()); }
+    catch { parsed = null; }
+    if (parsed) {
+      typeText(parsed.explanation, textEl, () => {
+        analogyEl.style.display = 'block';
+        typeText(parsed.analogy, analogyEl, () => {
+          if (parsed.steps?.length) {
+            stepsWrap.style.display = 'block';
+            parsed.steps.forEach((s,i) => setTimeout(() => {
+              const d = document.createElement('div'); d.className='out-step';
+              d.innerHTML=`<span class="sn">${i+1}</span><span>${s}</span>`;
+              document.getElementById('outSteps').appendChild(d);
+            }, i*100));
+            setTimeout(() => {
+              if (parsed.terms?.length) {
+                termsWrap.style.display='block';
+                parsed.terms.forEach(t => {
+                  const s=document.createElement('span');s.className='kt';s.textContent=t;
+                  document.getElementById('outTerms').appendChild(s);
+                });
+              }
+            }, parsed.steps.length*100+200);
+          }
+        });
+      });
+    } else {
+      textEl.innerHTML = raw || 'Could not generate explanation. Please try again.';
+    }
+  } catch(e) {
+    textEl.innerHTML = '⚠️ Could not connect to AI. Check your internet connection and try again.';
+  }
 }
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('demoInput').addEventListener('keydown', e => { if(e.key==='Enter') runDemo(); });
-});
 
-// ===== SUBJECT PAGE =====
-function loadSubjectPage(subjectId) {
-  state.currentSubject = subjectId;
-  const subj = SUBJECTS[subjectId];
-  if (!subj) return;
-  document.getElementById('subjectTitle').textContent = subj.icon + ' ' + subj.title;
-  document.getElementById('subjectDesc').textContent = subj.desc;
-  const grid = document.getElementById('lessonGrid');
-  grid.innerHTML = subj.lessons.map(l => `
-    <div class="lesson-card" onclick="navigate('lesson','${l.id}')">
-      <div class="lesson-title">${l.title}</div>
-      <div class="lesson-desc">${l.desc}</div>
-      <div class="lesson-meta">
-        <span class="lesson-time">⏱ ${l.time}</span>
-        <span class="lesson-lvl">${l.level}</span>
-      </div>
+function typeText(str, el, cb) {
+  el.innerHTML = '';
+  let j = 0;
+  const t = setInterval(() => {
+    el.innerHTML = str.slice(0, j++) + '<span class="tcur"></span>';
+    if (j > str.length) { clearInterval(t); el.innerHTML = str; if (cb) setTimeout(cb, 150); }
+  }, 12);
+}
+
+// ═══════════════════════════════════
+// SUBJECT & LESSON PAGES
+// ═══════════════════════════════════
+function loadSubject(id) {
+  S.subject = id;
+  const s = SUBJS[id]; if (!s) return;
+  document.getElementById('subjTitle').textContent = s.icon + ' ' + s.title;
+  document.getElementById('subjDesc').textContent = s.desc;
+  document.getElementById('lessonGrid').innerHTML = s.lessons.map(l =>
+    `<div class="lc" onclick="go('lesson','${l.id}')">
+      <div class="lt">${l.title}</div>
+      <div class="ld">${l.desc}</div>
+      <div class="lm"><span class="l-time">⏱ ${l.time}</span><span class="l-lvl">${l.lvl}</span></div>
     </div>`).join('');
 }
 
-// ===== LESSON PAGE =====
-function loadLessonPage(lessonId) {
-  state.currentLesson = lessonId;
-  const l = LESSONS[lessonId];
+function loadLesson(id) {
+  S.lesson = id;
+  const l = LESSON_DATA[id];
+  const wrap = document.getElementById('lessonContent');
   if (!l) {
-    document.getElementById('lessonContent').innerHTML = `<h1 class="lesson-h">Coming soon!</h1><p style="color:var(--muted)">This lesson is being written. Check back soon.</p>`;
+    wrap.innerHTML = `<button class="back-btn" onclick="go('subjects')">← Back</button><h1 class="lesson-h">Coming Soon</h1><p style="color:var(--muted2)">This lesson is being written. Use the AI chatbot to ask about this topic!</p><div style="margin-top:24px"><button class="btn btn-g" onclick="go('chat')">Ask AI Chatbot →</button></div>`;
     return;
   }
-  // Track lesson completion
-  if (state.user) {
-    const key = '6tg_lessons_' + state.user.email;
-    const done = JSON.parse(localStorage.getItem(key) || '[]');
-    if (!done.includes(lessonId)) { done.push(lessonId); localStorage.setItem(key, JSON.stringify(done)); }
+  if (S.user) {
+    const k = '6tg_ls_'+S.user.email;
+    const done = JSON.parse(localStorage.getItem(k)||'[]');
+    if (!done.includes(id)) { done.push(id); localStorage.setItem(k,JSON.stringify(done)); }
   }
-  const quiz = l.quiz;
-  document.getElementById('lessonContent').innerHTML = `
-    <div class="lesson-back" onclick="navigate('subject','${l.subject}')">← Back to ${l.subject}</div>
+  const q = l.quiz;
+  wrap.innerHTML = `
+    <button class="back-btn" onclick="go('subject','${l.subj}')">← Back to ${l.subj}</button>
     <h1 class="lesson-h">${l.title}</h1>
     <div class="lesson-body">${l.body}</div>
-    <div class="lesson-analogy-box">${l.analogy}</div>
-    ${quiz ? `<div class="quiz-box">
-      <div class="quiz-title">🎯 Quick Quiz</div>
-      <div class="quiz-q">${quiz.q}</div>
-      <div class="quiz-opts">
-        ${quiz.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(this,${i},${quiz.correct})">${o}</button>`).join('')}
-      </div>
-    </div>` : ''}
-    <div style="display:flex;gap:12px;margin-top:32px;flex-wrap:wrap">
-      <button class="btn btn-green" onclick="navigate('chat')">💬 Discuss with AI →</button>
-      <button class="btn btn-outline" onclick="navigate('subject','${l.subject}')">More ${l.subject} lessons</button>
+    <div class="lesson-analogy">${l.analogy}</div>
+    ${q?`<div class="quiz">
+      <div class="quiz-t">🎯 Quick Quiz</div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="qo" onclick="answerQ(this,${i},${q.c})">${o}</button>`).join('')}</div>
+    </div>`:''}
+    <div class="lesson-actions">
+      <button class="btn btn-g" onclick="go('chat')">💬 Discuss with AI →</button>
+      <button class="btn btn-o" onclick="go('subject','${l.subj}')">More lessons</button>
     </div>`;
 }
 
-function answerQuiz(btn, idx, correct) {
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts.forEach(o => o.disabled = true);
-  btn.classList.add(idx === correct ? 'correct' : 'wrong');
-  if (idx !== correct) opts[correct].classList.add('correct');
-  showNotif(idx === correct ? '✓ Correct! Great job.' : '✗ Not quite — the correct answer is highlighted.');
+function answerQ(btn,idx,correct) {
+  document.querySelectorAll('.qo').forEach(b => b.disabled=true);
+  btn.classList.add(idx===correct?'correct':'wrong');
+  if (idx!==correct) document.querySelectorAll('.qo')[correct].classList.add('correct');
+  notif(idx===correct?'✓ Correct! Great job.':'✗ Not quite — correct answer highlighted.');
 }
 
-// ===== CHAT =====
-const CHAT_RESPONSES = {
-  inflation: "Inflation is when prices go up over time, meaning your money buys less. Think of it like a shrinking candy bar that costs the same — that's inflation! The government tries to keep it around 2% per year. Want me to explain what causes it?",
-  'compound interest': "Compound interest is when you earn interest on your interest! Put $1,000 in an account at 10%: after year 1 you have $1,100. Year 2 you earn 10% on $1,100 = $1,210. The longer you wait, the faster it grows. It's why starting to invest young is so powerful!",
-  'stock market': "The stock market is where people buy and sell tiny ownership pieces (shares) of companies. If Apple does well, its shares go up and you make money. If it struggles, they go down. Think of it like buying a slice of a pizza shop — if the shop gets popular, your slice becomes worth more!",
-  'machine learning': "Machine learning is when computers learn from examples instead of being told exact rules. Show it 10,000 photos of cats, label them 'cat' — and eventually it learns to recognize cats on its own. It's how Netflix recommends shows, how your phone unlocks with your face, and how I work!",
-  blockchain: "A blockchain is a permanent record that nobody can change or delete. Imagine a public notebook that thousands of people all have identical copies of. When someone writes a new entry, it goes into everyone's copy at once. Nobody can secretly erase it. That's blockchain!",
-  trading: "Trading means buying something and hoping to sell it later for more money. You buy a stock at $10, it goes to $15, you sell — that's a $5 profit. The tricky part? Prices can go down too. That's why understanding risk is so important before you start trading.",
-  default: "That's a great question! I can explain any topic in simple 6th grade terms. Try asking me about: compound interest, inflation, the stock market, machine learning, blockchain, or trading. What would you like to understand?"
-};
+// ═══════════════════════════════════
+// CHAT — Streaming + Images + Any language
+// ═══════════════════════════════════
+let chatHistory = [];
+let chatLang = 'en';
+let isSending = false;
+let attachedImgs = []; // [{base64, mediaType, previewUrl}]
 
-function getReply(msg) {
-  const m = msg.toLowerCase();
-  for (const key of Object.keys(CHAT_RESPONSES)) {
-    if (key !== 'default' && m.includes(key)) return CHAT_RESPONSES[key];
-  }
-  return CHAT_RESPONSES.default;
+const LANG_NAMES = {en:'English',ar:'Arabic',zh:'Chinese',es:'Spanish',fr:'French',de:'German',ka:'Georgian',ru:'Russian',tr:'Turkish',hi:'Hindi',pt:'Portuguese',ja:'Japanese',ko:'Korean',auto:'the same language as the user'};
+
+function updateLang() {
+  chatLang = document.getElementById('chatLang').value;
+  notif(`🌍 Language set to ${LANG_NAMES[chatLang] || chatLang}`);
+}
+function chatKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} }
+function autoResize(el) { el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px'; }
+
+// Image handling
+function handleImgs(e) {
+  const files = Array.from(e.target.files);
+  const remaining = 3 - attachedImgs.length;
+  if (remaining <= 0) { notif('⚠️ Maximum 3 images allowed'); return; }
+  const toProcess = files.slice(0, remaining);
+  if (files.length > remaining) notif(`⚠️ Only ${remaining} more image(s) can be added (max 3)`);
+  toProcess.forEach(file => {
+    if (!file.type.startsWith('image/')) { notif('⚠️ Only image files allowed'); return; }
+    if (file.size > 5*1024*1024) { notif('⚠️ Image must be under 5MB'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const dataUrl = ev.target.result;
+      const base64 = dataUrl.split(',')[1];
+      const mediaType = file.type;
+      attachedImgs.push({base64, mediaType, previewUrl: dataUrl});
+      renderImgPreviews();
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
 }
 
-function chatKeydown(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } }
+function renderImgPreviews() {
+  const row = document.getElementById('imgPreviewRow');
+  if (attachedImgs.length === 0) { row.style.display = 'none'; return; }
+  row.style.display = 'flex';
+  row.innerHTML = attachedImgs.map((img,i) => `
+    <div class="img-preview">
+      <img src="${img.previewUrl}" alt="attached"/>
+      <button class="img-remove" onclick="removeImg(${i})">✕</button>
+    </div>`).join('');
+}
 
-function sendChat() {
-  const input = document.getElementById('chatInput');
+function removeImg(idx) {
+  attachedImgs.splice(idx,1);
+  renderImgPreviews();
+}
+
+async function sendChat() {
+  if (isSending) return;
+  const input = document.getElementById('chatIn');
   const msg = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-  addChatMsg(msg, 'user');
-  trackEvent('chat_message', msg);
-  state.analytics.explanations++;
-  saveAnalytics();
-  // Show typing indicator
-  const typingId = 'typing_' + Date.now();
+  if (!msg && attachedImgs.length === 0) return;
+
+  isSending = true;
+  document.getElementById('sendBtn').disabled = true;
+
+  const imgsToSend = [...attachedImgs];
+  attachedImgs = [];
+  renderImgPreviews();
+  input.value = ''; input.style.height = 'auto';
+
+  // Show user message with images
+  addUserMsg(msg, imgsToSend);
+
+  // Build content for API
+  const userContent = [];
+  imgsToSend.forEach(img => {
+    userContent.push({type:'image', source:{type:'base64', media_type:img.mediaType, data:img.base64}});
+  });
+  if (msg) userContent.push({type:'text', text:msg});
+
+  chatHistory.push({role:'user', content: userContent.length === 1 && userContent[0].type === 'text' ? msg : userContent});
+  track('chat', msg);
+  S.a.expls++; saveA();
+
+  const langInstruction = chatLang==='auto'
+    ? 'Always respond in the same language the user wrote in.'
+    : `Always respond in ${LANG_NAMES[chatLang]}.`;
+
+  // Create bot message bubble for streaming
   const msgs = document.getElementById('chatMsgs');
-  msgs.innerHTML += `<div class="chat-msg" id="${typingId}"><div class="msg-avatar bot">6</div><div class="msg-bubble"><span class="loading-dots"><span>●</span><span>●</span><span>●</span></span></div></div>`;
+  const botId = 'b'+Date.now();
+  msgs.innerHTML += `<div class="msg" id="${botId}"><div class="av bot">6</div><div class="bubble" id="bb${botId}"><span class="ldots"><span></span><span></span><span></span></span></div></div>`;
   msgs.scrollTop = msgs.scrollHeight;
-  setTimeout(() => {
-    const el = document.getElementById(typingId);
-    if (el) el.remove();
-    addChatMsg(getReply(msg), 'bot');
-  }, 900 + Math.random() * 600);
+
+  const systemPrompt = `You are 6thGrader's AI tutor, powered by Claude. You explain ANY topic in the world simply and clearly.
+
+Rules:
+- Use simple words and short sentences a 12-year-old can understand
+- Always include a real-world analogy or example
+- Be friendly, enthusiastic, and encouraging
+- If shown an image: analyze it accurately and truthfully — homework problems, trade charts, diagrams, anything
+- For trade chart images: identify patterns, trends, support/resistance levels, and give honest analysis
+- For homework images: solve the problem step by step, show your work
+- Never make up information — if unsure, say so honestly
+- ${langInstruction}
+- Keep responses focused and concise`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-haiku-4-5-20251001', // Haiku = much faster responses
+        max_tokens:600,
+        stream: false, // Note: browser can't stream directly due to CORS, but Haiku is fast enough
+        system: systemPrompt,
+        messages: chatHistory.slice(-8)
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, I had trouble with that. Try rephrasing!';
+    const bubble = document.getElementById('bb'+botId);
+    if (bubble) {
+      bubble.innerHTML = '';
+      // Stream-simulate: show text appearing fast character by character
+      let i = 0;
+      const interval = setInterval(() => {
+        const chunk = reply.slice(0, i += 4); // Show 4 chars at a time = feels instant
+        bubble.innerHTML = chunk.replace(/\n/g,'<br>') + (i < reply.length ? '<span class="tcur"></span>' : '');
+        msgs.scrollTop = msgs.scrollHeight;
+        if (i >= reply.length) {
+          clearInterval(interval);
+          bubble.innerHTML = reply.replace(/\n/g,'<br>');
+        }
+      }, 10); // Very fast — 10ms per chunk
+    }
+    chatHistory.push({role:'assistant', content:reply});
+  } catch(err) {
+    const bubble = document.getElementById('bb'+botId);
+    if (bubble) bubble.innerHTML = '⚠️ Connection error. Check your internet and try again.';
+  }
+  isSending = false;
+  document.getElementById('sendBtn').disabled = false;
 }
 
-function addChatMsg(text, role) {
+function addUserMsg(text, imgs) {
   const msgs = document.getElementById('chatMsgs');
-  const initials = role === 'bot' ? '6' : (state.user ? state.user.name[0].toUpperCase() : 'U');
-  msgs.innerHTML += `<div class="chat-msg ${role}"><div class="msg-avatar ${role}">${initials}</div><div class="msg-bubble">${text}</div></div>`;
+  const init = S.user ? S.user.name[0].toUpperCase() : 'U';
+  const imgHtml = imgs.map(img => `<img class="msg-img" src="${img.previewUrl}" alt="attached image"/>`).join('');
+  const textHtml = text ? `<span>${text.replace(/</g,'&lt;')}</span>` : '';
+  msgs.innerHTML += `<div class="msg user"><div class="av user">${init}</div><div class="bubble">${textHtml}${imgHtml}</div></div>`;
   msgs.scrollTop = msgs.scrollHeight;
 }
 
-// ===== PRICING =====
-function setPricingToggle(mode) {
-  document.getElementById('togMonth').classList.toggle('active', mode === 'month');
-  document.getElementById('togYear').classList.toggle('active', mode === 'year');
-  document.getElementById('proPrice').innerHTML = mode === 'year' ? '$6.25 <span>/ month</span>' : '$8 <span>/ month</span>';
-  document.getElementById('proSub').textContent = mode === 'year' ? 'Billed $75/year — save 22%' : 'Billed monthly';
-  document.getElementById('proBtnMain').textContent = mode === 'year' ? 'Start Pro — $75/yr →' : 'Start Pro — $8/mo →';
+// ═══════════════════════════════════
+// PRICING
+// ═══════════════════════════════════
+function setTog(m) {
+  document.getElementById('tm').classList.toggle('on', m==='month');
+  document.getElementById('ty').classList.toggle('on', m==='year');
+  document.getElementById('proAmt').innerHTML = m==='year' ? '$6.25 <small>/ month</small>' : '$8 <small>/ month</small>';
+  document.getElementById('proSub').textContent = m==='year' ? 'Billed $75/year — save 22%' : 'Billed monthly';
+  document.getElementById('proBtn').textContent = m==='year' ? 'Start Pro — $75/yr →' : 'Start Pro — $8/mo →';
+}
+function startPro() { notif('🔗 Payment coming soon — powered by Lemon Squeezy!'); }
+
+// ═══════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════
+function loadDash() {
+  if (!S.user) return;
+  document.getElementById('dashName').textContent = S.user.name.split(' ')[0];
+  const k = '6tg_ls_'+S.user.email;
+  const done = JSON.parse(localStorage.getItem(k)||'[]');
+  const expls = parseInt(localStorage.getItem('6tg_ue')||'0');
+  document.getElementById('dE').textContent = expls;
+  document.getElementById('dL').textContent = done.length;
 }
 
-function startPro() {
-  showNotif('🔗 Redirecting to payment... (connect Lemon Squeezy to enable)');
-  // In production: window.location.href = 'https://your-store.lemonsqueezy.com/checkout/...';
-}
-
-// ===== DASHBOARD =====
-function loadDashboard() {
-  if (!state.user) return;
-  document.getElementById('dashUser').textContent = state.user.name.split(' ')[0];
-  const expls = parseInt(localStorage.getItem('6tg_user_expls') || '0');
-  const lessonsKey = '6tg_lessons_' + state.user.email;
-  const lessons = JSON.parse(localStorage.getItem(lessonsKey) || '[]');
-  document.getElementById('dExpls').textContent = expls;
-  document.getElementById('dLessons').textContent = lessons.length;
-}
-
-// ===== ADMIN =====
+// ═══════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════
 function loadAdmin() {
-  const a = state.analytics;
-  document.getElementById('adTotal').textContent = a.totalUsers;
-  document.getElementById('adToday').textContent = a.todayUsers;
-  document.getElementById('adExpls').textContent = a.explanations;
-  document.getElementById('adPro').textContent = a.proUsers;
-  document.getElementById('adActive').textContent = a.activeNow;
-  document.getElementById('adRevenue').textContent = '$' + (a.proUsers * 8);
-
-  // Chart
-  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  const bars = document.getElementById('adminBars');
-  const lbls = document.getElementById('adminBarLabels');
-  const max = Math.max(...a.signups, 1);
-  bars.innerHTML = a.signups.map((v,i) => `<div class="bar" style="height:${(v/max)*100}%" title="${v} signups"></div>`).join('');
-  lbls.innerHTML = days.map((d,i) => `<div class="bar-lbl" style="flex:1">${d}<br><span style="color:var(--text);font-size:.7rem">${a.signups[i]}</span></div>`).join('');
-
-  // Activity
-  const activities = [
-    {dot:'green', text:'New user signed up — welcome@example.com', time:'2 min ago'},
-    {dot:'blue', text:'Explanation generated: "What is compound interest?"', time:'5 min ago'},
-    {dot:'green', text:'New user signed up — student@university.edu', time:'12 min ago'},
-    {dot:'blue', text:'Lesson completed: How the Stock Market Works', time:'18 min ago'},
-    {dot:'red', text:'Pro subscription started — $8/mo', time:'34 min ago'},
-    {dot:'blue', text:'Chat message sent — "Explain inflation"', time:'1 hr ago'},
-    ...(a.users.slice(-3).reverse().map(u => ({dot:'green', text:`New signup: ${u.name} (${u.email})`, time: u.time})))
+  const a = S.a;
+  document.getElementById('adU').textContent = a.users;
+  document.getElementById('adTd').textContent = a.today;
+  document.getElementById('adE').textContent = a.expls;
+  document.getElementById('adP').textContent = a.pro;
+  document.getElementById('adAc').textContent = a.active;
+  document.getElementById('adRev').textContent = '$'+(a.pro*8);
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max=Math.max(...a.signups,1);
+  document.getElementById('admBars').innerHTML = a.signups.map(v=>`<div class="bar" style="height:${Math.round((v/max)*100)}%" title="${v}"></div>`).join('');
+  document.getElementById('admLbls').innerHTML = days.map((d,i)=>`<div class="bar-lbl">${d}<br><strong style="color:var(--text)">${a.signups[i]}</strong></div>`).join('');
+  const acts = [
+    {dot:'g',text:'New signup — welcome@example.com',time:'2 min ago'},
+    {dot:'b',text:'Explanation: "What is compound interest?"',time:'5 min ago'},
+    {dot:'b',text:'Chat message in Arabic',time:'8 min ago'},
+    {dot:'g',text:'New signup — student@school.edu',time:'14 min ago'},
+    {dot:'r',text:'Pro subscription started',time:'31 min ago'},
+    {dot:'b',text:'Lesson completed: Stock Market',time:'44 min ago'},
+    ...a.log.slice(0,3).map(l=>({dot:l.dot,text:l.text,time:l.time}))
   ];
-  document.getElementById('activityList').innerHTML = activities.slice(0,8).map(a =>
-    `<div class="activity-row"><div class="activity-dot ${a.dot}"></div><span>${a.text}</span><span class="activity-time">${a.time}</span></div>`
+  document.getElementById('actList').innerHTML = acts.slice(0,8).map(a=>
+    `<div class="act-row"><div class="adot ${a.dot}"></div><span>${a.text}</span><span class="act-time">${a.time}</span></div>`
   ).join('');
 }
 
-// ===== ANALYTICS =====
-function trackEvent(type, value) {
-  // In production: send to Supabase / PostHog / Google Analytics
-  // Example Supabase: fetch('https://your.supabase.co/rest/v1/events', { method:'POST', headers:{...}, body: JSON.stringify({type, value}) })
-  console.log('[6thGrader Analytics]', type, value);
-}
-
-function saveAnalytics() { localStorage.setItem('6tg_analytics', JSON.stringify(state.analytics)); }
-
-function updateStatCounters() {
-  const a = state.analytics;
-  // Animate counter
-  animateCounter('statUsers', a.totalUsers);
-  animateCounter('statExpls', a.explanations);
-}
-
-function animateCounter(id, target) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const start = parseInt(el.textContent.replace(/,/g,'')) || 0;
-  const diff = target - start;
-  const steps = 30;
-  let i = 0;
-  const t = setInterval(() => {
-    i++;
-    el.textContent = Math.round(start + (diff * i / steps)).toLocaleString();
-    if (i >= steps) clearInterval(t);
-  }, 20);
-}
-
-// ===== CONCEPT COUNTER =====
-function animateConceptCount() {
-  const el = document.getElementById('conceptCount');
-  if (!el) return;
-  const target = 347129 + state.analytics.explanations;
-  let val = target - 200;
-  const t = setInterval(() => {
-    val += Math.floor(Math.random() * 3) + 1;
-    if (val >= target) { val = target; clearInterval(t); }
-    el.textContent = val.toLocaleString();
-  }, 30);
-}
-
-// ===== NOTIFICATIONS =====
-function showNotif(msg) {
-  const old = document.querySelector('.notif');
-  if (old) old.remove();
-  const n = document.createElement('div');
-  n.className = 'notif';
-  n.textContent = msg;
+// ═══════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════
+function track(type, val) { console.log('[6tg]', type, val); }
+function saveA() { localStorage.setItem('6tg_a', JSON.stringify(S.a)); }
+function notif(msg) {
+  const old = document.querySelector('.notif'); if (old) old.remove();
+  const n = document.createElement('div'); n.className='notif'; n.textContent=msg;
   document.body.appendChild(n);
-  setTimeout(() => { n.classList.add('hide'); setTimeout(() => n.remove(), 300); }, 3000);
+  setTimeout(()=>{ n.classList.add('hide'); setTimeout(()=>n.remove(),300); }, 3000);
 }
-
-// ===== REVEAL ON SCROLL =====
 function setupReveal() {
-  setTimeout(() => {
-    const els = document.querySelectorAll('.rev');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
-    }, {threshold: 0.08});
-    els.forEach(e => obs.observe(e));
-  }, 100);
+  setTimeout(()=>{
+    const obs = new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')}),{threshold:.08});
+    document.querySelectorAll('.rev').forEach(el=>obs.observe(el));
+  },80);
 }
 
-// ===== CUSTOM CURSOR =====
-const cur = document.getElementById('cur'), curR = document.getElementById('curR');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cur.style.left=mx+'px'; cur.style.top=my+'px'; });
-(function animC(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(animC)})();
-document.addEventListener('mouseover', e => {
-  if (e.target.matches('a,button,.subj-tag,.pill,.lesson-card,.feat-card,.subj-tag,.quiz-opt')) {
-    cur.style.transform='translate(-50%,-50%) scale(1.8)';
-    curR.style.width='52px';curR.style.height='52px';
-  }
-});
-document.addEventListener('mouseout', e => {
-  if (e.target.matches('a,button,.subj-tag,.pill,.lesson-card,.feat-card,.subj-tag,.quiz-opt')) {
-    cur.style.transform='translate(-50%,-50%) scale(1)';
-    curR.style.width='32px';curR.style.height='32px';
-  }
-});
+// Counter animation
+function animCount(id, target) {
+  const el = document.getElementById(id); if (!el) return;
+  let v = target - 80; const t = setInterval(()=>{ v+=Math.ceil(Math.random()*3)+1; el.textContent=v.toLocaleString(); if(v>=target){el.textContent=target.toLocaleString();clearInterval(t);} },25);
+}
 
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-  updateNav();
-  updateStatCounters();
-  animateConceptCount();
-  setupReveal();
+// Cursor
+const cur=document.getElementById('cur'),curR=document.getElementById('curR');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop)})();
+
+// Init
+document.addEventListener('DOMContentLoaded',()=>{
+  updateNav(); setupReveal();
+  animCount('conceptCount', 347129 + S.a.expls);
+  animCount('statU', S.a.users);
+  animCount('statE', S.a.expls);
+  document.getElementById('demoIn').addEventListener('keydown',e=>{if(e.key==='Enter')runDemo()});
 });
 </script>
 </body>
